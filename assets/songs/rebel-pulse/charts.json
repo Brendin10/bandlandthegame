@@ -1,0 +1,1709 @@
+{
+  "Bass": [
+    {
+      "beat": 1,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 0.2554
+    },
+    {
+      "beat": 3,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 1.5093
+    },
+    {
+      "beat": 5,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 2.2639
+    },
+    {
+      "beat": 7,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 3.5062
+    },
+    {
+      "beat": 9,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 4.2609
+    },
+    {
+      "beat": 11,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 5.5147
+    },
+    {
+      "beat": 13,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 6.2578
+    },
+    {
+      "beat": 15,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 7.5117
+    },
+    {
+      "beat": 17,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 8.2547
+    },
+    {
+      "beat": 19,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 9.5086
+    },
+    {
+      "beat": 21,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 10.2632
+    },
+    {
+      "beat": 23,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 11.5171
+    },
+    {
+      "beat": 25,
+      "note": "C#2",
+      "dur": 1,
+      "timeSec": 12.2601
+    },
+    {
+      "beat": 27,
+      "note": "C#2",
+      "dur": 1,
+      "timeSec": 13.514
+    },
+    {
+      "beat": 29,
+      "note": "C#2",
+      "dur": 1,
+      "timeSec": 14.2571
+    },
+    {
+      "beat": 31,
+      "note": "C#2",
+      "dur": 1,
+      "timeSec": 15.5109
+    },
+    {
+      "beat": 33,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 16.2656
+    },
+    {
+      "beat": 35,
+      "note": "A#2",
+      "dur": 1,
+      "timeSec": 17.5078
+    },
+    {
+      "beat": 37,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 18.2625
+    },
+    {
+      "beat": 39,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 19.5164
+    },
+    {
+      "beat": 41,
+      "note": "A#2",
+      "dur": 1,
+      "timeSec": 20.2594
+    },
+    {
+      "beat": 43,
+      "note": "A#2",
+      "dur": 1,
+      "timeSec": 21.5133
+    },
+    {
+      "beat": 45,
+      "note": "A#2",
+      "dur": 1,
+      "timeSec": 22.2563
+    },
+    {
+      "beat": 47,
+      "note": "A#2",
+      "dur": 1,
+      "timeSec": 23.5102
+    },
+    {
+      "beat": 49,
+      "note": "G#2",
+      "dur": 1,
+      "timeSec": 24.2649
+    },
+    {
+      "beat": 51,
+      "note": "G#2",
+      "dur": 1,
+      "timeSec": 25.5187
+    },
+    {
+      "beat": 53,
+      "note": "G#2",
+      "dur": 1,
+      "timeSec": 26.2618
+    },
+    {
+      "beat": 55,
+      "note": "G#2",
+      "dur": 1,
+      "timeSec": 27.5156
+    },
+    {
+      "beat": 57,
+      "note": "D2",
+      "dur": 1,
+      "timeSec": 28.2587
+    },
+    {
+      "beat": 59,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 29.5126
+    },
+    {
+      "beat": 61,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 30.2672
+    },
+    {
+      "beat": 63,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 31.5095
+    },
+    {
+      "beat": 65,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 32.2641
+    },
+    {
+      "beat": 67,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 33.518
+    },
+    {
+      "beat": 69,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 34.261
+    },
+    {
+      "beat": 71,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 35.5149
+    },
+    {
+      "beat": 73,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 36.258
+    },
+    {
+      "beat": 75,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 37.5118
+    },
+    {
+      "beat": 77,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 38.2665
+    },
+    {
+      "beat": 79,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 39.5088
+    },
+    {
+      "beat": 81,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 40.2634
+    },
+    {
+      "beat": 83,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 41.5173
+    },
+    {
+      "beat": 85,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 42.2603
+    },
+    {
+      "beat": 87,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 43.5142
+    },
+    {
+      "beat": 89,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 44.2572
+    },
+    {
+      "beat": 91,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 45.5111
+    },
+    {
+      "beat": 93,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 46.2658
+    },
+    {
+      "beat": 95,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 47.508
+    },
+    {
+      "beat": 97,
+      "note": "C#2",
+      "dur": 1,
+      "timeSec": 48.2627
+    },
+    {
+      "beat": 99,
+      "note": "C#2",
+      "dur": 1,
+      "timeSec": 49.5166
+    },
+    {
+      "beat": 101,
+      "note": "C2",
+      "dur": 1,
+      "timeSec": 50.2596
+    },
+    {
+      "beat": 103,
+      "note": "C#2",
+      "dur": 1,
+      "timeSec": 51.5135
+    },
+    {
+      "beat": 105,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 52.2565
+    },
+    {
+      "beat": 107,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 53.5104
+    },
+    {
+      "beat": 109,
+      "note": "B2",
+      "dur": 1,
+      "timeSec": 54.265
+    },
+    {
+      "beat": 111,
+      "note": "A#2",
+      "dur": 1,
+      "timeSec": 55.5073
+    },
+    {
+      "beat": 113,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 56.262
+    },
+    {
+      "beat": 115,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 57.5158
+    },
+    {
+      "beat": 117,
+      "note": "D2",
+      "dur": 1,
+      "timeSec": 58.2589
+    },
+    {
+      "beat": 119,
+      "note": "D#2",
+      "dur": 1,
+      "timeSec": 59.5127
+    }
+  ],
+  "Drums": [
+    {
+      "beat": 1,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 0.5108
+    },
+    {
+      "beat": 2,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 1.0101
+    },
+    {
+      "beat": 3,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 1.5093
+    },
+    {
+      "beat": 4,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 2.0085
+    },
+    {
+      "beat": 6,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 3.007
+    },
+    {
+      "beat": 8,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 4.0054
+    },
+    {
+      "beat": 13,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 6.5132
+    },
+    {
+      "beat": 14,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 7.0124
+    },
+    {
+      "beat": 15,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 7.5117
+    },
+    {
+      "beat": 16,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 8.0109
+    },
+    {
+      "beat": 17,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 8.5101
+    },
+    {
+      "beat": 18,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 9.021
+    },
+    {
+      "beat": 19,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 9.5086
+    },
+    {
+      "beat": 20,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 10.0194
+    },
+    {
+      "beat": 23,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 11.5055
+    },
+    {
+      "beat": 27,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 13.514
+    },
+    {
+      "beat": 28,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 14.0132
+    },
+    {
+      "beat": 29,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 14.5125
+    },
+    {
+      "beat": 30,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 15.0117
+    },
+    {
+      "beat": 31,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 15.5109
+    },
+    {
+      "beat": 32,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 16.0102
+    },
+    {
+      "beat": 33,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 16.5094
+    },
+    {
+      "beat": 34,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 17.0202
+    },
+    {
+      "beat": 35,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 17.5078
+    },
+    {
+      "beat": 36,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 18.0187
+    },
+    {
+      "beat": 39,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 19.5048
+    },
+    {
+      "beat": 43,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 21.5133
+    },
+    {
+      "beat": 44,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 22.0125
+    },
+    {
+      "beat": 45,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 22.5117
+    },
+    {
+      "beat": 46,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 23.011
+    },
+    {
+      "beat": 47,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 23.5102
+    },
+    {
+      "beat": 48,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 24.021
+    },
+    {
+      "beat": 52,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 26.0063
+    },
+    {
+      "beat": 56,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 28.0149
+    },
+    {
+      "beat": 57,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 28.5141
+    },
+    {
+      "beat": 59,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 29.5126
+    },
+    {
+      "beat": 60,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 30.0118
+    },
+    {
+      "beat": 64,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 32.0087
+    },
+    {
+      "beat": 68,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 34.0056
+    },
+    {
+      "beat": 72,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 35.7587
+    },
+    {
+      "beat": 73,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 36.5134
+    },
+    {
+      "beat": 74,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 37.0126
+    },
+    {
+      "beat": 75,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 37.5118
+    },
+    {
+      "beat": 76,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 38.0111
+    },
+    {
+      "beat": 77,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 38.5103
+    },
+    {
+      "beat": 78,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 39.0095
+    },
+    {
+      "beat": 79,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 39.5088
+    },
+    {
+      "beat": 80,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 40.008
+    },
+    {
+      "beat": 82,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 41.0064
+    },
+    {
+      "beat": 84,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 42.0049
+    },
+    {
+      "beat": 87,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 43.5142
+    },
+    {
+      "beat": 88,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 44.0134
+    },
+    {
+      "beat": 89,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 44.5127
+    },
+    {
+      "beat": 90,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 45.0119
+    },
+    {
+      "beat": 91,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 45.5111
+    },
+    {
+      "beat": 92,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 46.0103
+    },
+    {
+      "beat": 93,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 46.5096
+    },
+    {
+      "beat": 94,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 47.0204
+    },
+    {
+      "beat": 95,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 47.508
+    },
+    {
+      "beat": 96,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 48.0189
+    },
+    {
+      "beat": 99,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 49.5049
+    },
+    {
+      "beat": 103,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 51.5135
+    },
+    {
+      "beat": 104,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 52.0127
+    },
+    {
+      "beat": 105,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 52.5119
+    },
+    {
+      "beat": 106,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 53.0112
+    },
+    {
+      "beat": 107,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 53.5104
+    },
+    {
+      "beat": 108,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 54.0212
+    },
+    {
+      "beat": 109,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 54.5088
+    },
+    {
+      "beat": 110,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 55.0197
+    },
+    {
+      "beat": 111,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 55.5073
+    },
+    {
+      "beat": 112,
+      "hit": "kick",
+      "dur": 1,
+      "timeSec": 56.0181
+    },
+    {
+      "beat": 117,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 58.5143
+    },
+    {
+      "beat": 119,
+      "hit": "snare",
+      "dur": 1,
+      "timeSec": 59.5127
+    }
+  ],
+  "Lead": [
+    {
+      "beat": 1,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 0.4992
+    },
+    {
+      "beat": 2,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 0.8707
+    },
+    {
+      "beat": 3,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 1.5093
+    },
+    {
+      "beat": 4,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 1.9969
+    },
+    {
+      "beat": 5,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 2.5078
+    },
+    {
+      "beat": 6,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 2.9954
+    },
+    {
+      "beat": 7,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 3.4946
+    },
+    {
+      "beat": 8,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 3.9938
+    },
+    {
+      "beat": 9,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 4.5047
+    },
+    {
+      "beat": 10,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 5.0039
+    },
+    {
+      "beat": 11,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 5.5147
+    },
+    {
+      "beat": 12,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 5.863
+    },
+    {
+      "beat": 13,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 6.49
+    },
+    {
+      "beat": 14,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 7.0008
+    },
+    {
+      "beat": 15,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 7.5
+    },
+    {
+      "beat": 16,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 7.9877
+    },
+    {
+      "beat": 17,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 8.336
+    },
+    {
+      "beat": 18,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 8.9977
+    },
+    {
+      "beat": 19,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 9.5086
+    },
+    {
+      "beat": 20,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 10.0078
+    },
+    {
+      "beat": 21,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 10.3561
+    },
+    {
+      "beat": 22,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 11.0063
+    },
+    {
+      "beat": 23,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 11.5055
+    },
+    {
+      "beat": 24,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 11.9931
+    },
+    {
+      "beat": 25,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 12.4923
+    },
+    {
+      "beat": 26,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 13.0032
+    },
+    {
+      "beat": 27,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 13.3631
+    },
+    {
+      "beat": 28,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 14.0132
+    },
+    {
+      "beat": 29,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 14.5009
+    },
+    {
+      "beat": 30,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 15.0001
+    },
+    {
+      "beat": 31,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 15.4993
+    },
+    {
+      "beat": 32,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 15.9985
+    },
+    {
+      "beat": 33,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 16.4978
+    },
+    {
+      "beat": 34,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 16.9854
+    },
+    {
+      "beat": 35,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 17.3337
+    },
+    {
+      "beat": 36,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 18.0071
+    },
+    {
+      "beat": 37,
+      "chord": "C",
+      "dur": 1,
+      "timeSec": 18.5063
+    },
+    {
+      "beat": 38,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 19.0055
+    },
+    {
+      "beat": 39,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 19.5048
+    },
+    {
+      "beat": 40,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 20.004
+    },
+    {
+      "beat": 41,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 20.4916
+    },
+    {
+      "beat": 42,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 20.9908
+    },
+    {
+      "beat": 43,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 21.5017
+    },
+    {
+      "beat": 44,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 22.0125
+    },
+    {
+      "beat": 45,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 22.5117
+    },
+    {
+      "beat": 46,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 22.9994
+    },
+    {
+      "beat": 47,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 23.4986
+    },
+    {
+      "beat": 48,
+      "chord": "E",
+      "dur": 1,
+      "timeSec": 24.0094
+    },
+    {
+      "beat": 49,
+      "chord": "E",
+      "dur": 1,
+      "timeSec": 24.4971
+    },
+    {
+      "beat": 50,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 25.0079
+    },
+    {
+      "beat": 51,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 25.4839
+    },
+    {
+      "beat": 52,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 25.8322
+    },
+    {
+      "beat": 53,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 26.5056
+    },
+    {
+      "beat": 54,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 27.0164
+    },
+    {
+      "beat": 55,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 27.4924
+    },
+    {
+      "beat": 56,
+      "chord": "E",
+      "dur": 1,
+      "timeSec": 28.0149
+    },
+    {
+      "beat": 57,
+      "chord": "E",
+      "dur": 1,
+      "timeSec": 28.5025
+    },
+    {
+      "beat": 58,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 29.0133
+    },
+    {
+      "beat": 59,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 29.4893
+    },
+    {
+      "beat": 60,
+      "chord": "E",
+      "dur": 1,
+      "timeSec": 30.0118
+    },
+    {
+      "beat": 61,
+      "chord": "E",
+      "dur": 1,
+      "timeSec": 30.511
+    },
+    {
+      "beat": 62,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 31.0102
+    },
+    {
+      "beat": 63,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 31.4979
+    },
+    {
+      "beat": 64,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 31.8578
+    },
+    {
+      "beat": 65,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 32.4963
+    },
+    {
+      "beat": 66,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 33.0072
+    },
+    {
+      "beat": 67,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 33.4948
+    },
+    {
+      "beat": 68,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 34.0056
+    },
+    {
+      "beat": 69,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 34.4932
+    },
+    {
+      "beat": 70,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 34.8415
+    },
+    {
+      "beat": 71,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 35.5033
+    },
+    {
+      "beat": 72,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 36.0141
+    },
+    {
+      "beat": 73,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 36.5018
+    },
+    {
+      "beat": 74,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 37.001
+    },
+    {
+      "beat": 75,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 37.5002
+    },
+    {
+      "beat": 76,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 37.9878
+    },
+    {
+      "beat": 77,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 38.4987
+    },
+    {
+      "beat": 78,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 39.0095
+    },
+    {
+      "beat": 79,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 39.5088
+    },
+    {
+      "beat": 80,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 40.008
+    },
+    {
+      "beat": 81,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 40.4956
+    },
+    {
+      "beat": 82,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 40.9948
+    },
+    {
+      "beat": 83,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 41.4941
+    },
+    {
+      "beat": 84,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 42.0049
+    },
+    {
+      "beat": 85,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 42.4925
+    },
+    {
+      "beat": 86,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 42.9917
+    },
+    {
+      "beat": 87,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 43.34
+    },
+    {
+      "beat": 88,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 44.0018
+    },
+    {
+      "beat": 89,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 44.501
+    },
+    {
+      "beat": 90,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 45.0003
+    },
+    {
+      "beat": 91,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 45.4995
+    },
+    {
+      "beat": 92,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 45.8594
+    },
+    {
+      "beat": 93,
+      "chord": "C",
+      "dur": 1,
+      "timeSec": 46.498
+    },
+    {
+      "beat": 94,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 46.9972
+    },
+    {
+      "beat": 95,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 47.508
+    },
+    {
+      "beat": 96,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 48.0073
+    },
+    {
+      "beat": 97,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 48.5065
+    },
+    {
+      "beat": 98,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 48.9941
+    },
+    {
+      "beat": 99,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 49.3424
+    },
+    {
+      "beat": 100,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 50.0042
+    },
+    {
+      "beat": 101,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 50.5034
+    },
+    {
+      "beat": 102,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 50.991
+    },
+    {
+      "beat": 103,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 51.4902
+    },
+    {
+      "beat": 104,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 52.0011
+    },
+    {
+      "beat": 105,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 52.5119
+    },
+    {
+      "beat": 106,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 52.9995
+    },
+    {
+      "beat": 107,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 53.4988
+    },
+    {
+      "beat": 108,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 54.0096
+    },
+    {
+      "beat": 109,
+      "chord": "C",
+      "dur": 1,
+      "timeSec": 54.5088
+    },
+    {
+      "beat": 110,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 54.9965
+    },
+    {
+      "beat": 111,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 55.4957
+    },
+    {
+      "beat": 112,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 56.0065
+    },
+    {
+      "beat": 113,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 56.5058
+    }
+  ],
+  "Keys": [
+    {
+      "beat": 0,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 0.0348
+    },
+    {
+      "beat": 2,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 1.0101
+    },
+    {
+      "beat": 4,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 2.0085
+    },
+    {
+      "beat": 6,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 3.007
+    },
+    {
+      "beat": 8,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 4.0054
+    },
+    {
+      "beat": 10,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 5.0155
+    },
+    {
+      "beat": 12,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 6.014
+    },
+    {
+      "beat": 14,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 7.0124
+    },
+    {
+      "beat": 16,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 8.0109
+    },
+    {
+      "beat": 20,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 10.0078
+    },
+    {
+      "beat": 24,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 12.0047
+    },
+    {
+      "beat": 28,
+      "chord": "C",
+      "dur": 1,
+      "timeSec": 14.0132
+    },
+    {
+      "beat": 32,
+      "chord": "A#",
+      "dur": 1,
+      "timeSec": 16.0102
+    },
+    {
+      "beat": 36,
+      "chord": "F",
+      "dur": 1,
+      "timeSec": 18.0071
+    },
+    {
+      "beat": 40,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 20.004
+    },
+    {
+      "beat": 44,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 22.0125
+    },
+    {
+      "beat": 48,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 24.0094
+    },
+    {
+      "beat": 52,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 26.0063
+    },
+    {
+      "beat": 56,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 28.0149
+    },
+    {
+      "beat": 60,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 30.0118
+    },
+    {
+      "beat": 64,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 32.0087
+    },
+    {
+      "beat": 68,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 34.0056
+    },
+    {
+      "beat": 72,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 36.0141
+    },
+    {
+      "beat": 74,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 37.0126
+    },
+    {
+      "beat": 76,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 38.0111
+    },
+    {
+      "beat": 78,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 39.0095
+    },
+    {
+      "beat": 80,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 40.008
+    },
+    {
+      "beat": 82,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 41.0064
+    },
+    {
+      "beat": 84,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 42.0049
+    },
+    {
+      "beat": 86,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 43.015
+    },
+    {
+      "beat": 88,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 44.0134
+    },
+    {
+      "beat": 92,
+      "chord": "A",
+      "dur": 1,
+      "timeSec": 46.0103
+    },
+    {
+      "beat": 96,
+      "chord": "C",
+      "dur": 1,
+      "timeSec": 48.0073
+    },
+    {
+      "beat": 100,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 50.0042
+    },
+    {
+      "beat": 104,
+      "chord": "G",
+      "dur": 1,
+      "timeSec": 52.0127
+    },
+    {
+      "beat": 108,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 54.0096
+    },
+    {
+      "beat": 112,
+      "chord": "D",
+      "dur": 1,
+      "timeSec": 56.0065
+    }
+  ],
+  "Full": []
+}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bandland — Instrument Grip Tuner</title>
+  <link rel="stylesheet" href="../css/styles.css?v=17" />
+  <style>
+    body { background: #0a0014; color: #eee; font-family: Fredoka, sans-serif; padding: 16px; }
+    .tune-wrap { display: grid; grid-template-columns: 1fr 320px; gap: 24px; max-width: 1100px; margin: 0 auto; }
+    .tune-preview { background: #120020; border: 2px solid #9b30ff; border-radius: 16px; padding: 24px; display: flex; justify-content: center; min-height: 420px; }
+    .tune-panel { background: #1a0a28; border-radius: 12px; padding: 16px; }
+    .tune-panel label { display: block; margin: 8px 0 4px; font-size: 0.85rem; color: #9b8ab8; }
+    .tune-panel input, .tune-panel select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #9b30ff; background: #0a0014; color: #fff; }
+    .tune-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tune-export { width: 100%; min-height: 120px; margin-top: 12px; font-family: monospace; font-size: 0.75rem; }
+    .tune-hint { font-size: 0.8rem; color: #888; margin-top: 8px; }
+    .tune-keys kbd { background: #333; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Instrument Grip Tuner</h1>
+  <p class="tune-hint">Adjust grip anchors so monster hands align with transparent PNG instruments. Export JSON into <code>js/instrument-grips.js</code> OVERRIDES.</p>
+  <div class="tune-wrap">
+    <div class="tune-preview" id="preview"></div>
+    <div class="tune-panel">
+      <label>Instrument</label>
+      <select id="inst-select"></select>
+      <label>Character</label>
+      <select id="char-select"><option value="benny">Benny</option><option value="lizzy">Lizzy</option></select>
+      <div class="tune-row">
+        <div><label>gripL.x</label><input type="number" id="gripLx" step="1" /></div>
+        <div><label>gripL.y</label><input type="number" id="gripLy" step="1" /></div>
+        <div><label>gripR.x</label><input type="number" id="gripRx" step="1" /></div>
+        <div><label>gripR.y</label><input type="number" id="gripRy" step="1" /></div>
+        <div><label>art.w</label><input type="number" id="artW" step="1" /></div>
+        <div><label>art.h</label><input type="number" id="artH" step="1" /></div>
+        <div><label>anchorX</label><input type="number" id="anchorX" step="0.01" /></div>
+        <div><label>anchorY</label><input type="number" id="anchorY" step="0.01" /></div>
+        <div><label>rot</label><input type="number" id="rot" step="1" /></div>
+      </div>
+      <p class="tune-keys tune-hint">Arrow keys: move gripL · Shift+arrow: move gripR · [ ]: rotate · +/-: scale</p>
+      <textarea class="tune-export" id="export" readonly></textarea>
+    </div>
+  </div>
+  <script src="../js/instrument-grips.js"></script>
+  <script src="../js/instrument-art.js"></script>
+  <script src="../js/instruments.js"></script>
+  <script src="../js/character-rig.js"></script>
+  <script src="../js/characters.js"></script>
+  <script>
+    const edits = {};
+    const sel = document.getElementById('inst-select');
+    Object.keys(INSTRUMENTS).forEach((id) => {
+      const o = document.createElement('option');
+      o.value = id;
+      o.textContent = INSTRUMENTS[id].name;
+      sel.appendChild(o);
+    });
+
+    function currentEdit() {
+      const id = sel.value;
+      if (!edits[id]) edits[id] = JSON.parse(JSON.stringify(InstrumentGrips.getGrip(INSTRUMENTS[id])));
+      return edits[id];
+    }
+
+    function syncFields() {
+      const g = currentEdit();
+      document.getElementById('gripLx').value = g.gripL.x;
+      document.getElementById('gripLy').value = g.gripL.y;
+      document.getElementById('gripRx').value = g.gripR.x;
+      document.getElementById('gripRy').value = g.gripR.y;
+      document.getElementById('artW').value = g.art.w;
+      document.getElementById('artH').value = g.art.h;
+      document.getElementById('anchorX').value = g.art.anchorX;
+      document.getElementById('anchorY').value = g.art.anchorY;
+      document.getElementById('rot').value = g.rot;
+      renderPreview();
+      exportJson();
+    }
+
+    function renderPreview() {
+      const id = sel.value;
+      const charId = document.getElementById('char-select').value;
+      const g = currentEdit();
+      const orig = InstrumentGrips.OVERRIDES[id];
+      InstrumentGrips.OVERRIDES[id] = {
+        gripL: g.gripL,
+        gripR: g.gripR,
+        art: g.art,
+        rot: g.rot,
+      };
+      document.getElementById('preview').innerHTML = renderCharacter(charId, 200, {
+        instrument: INSTRUMENTS[id],
+      });
+      if (!orig) delete InstrumentGrips.OVERRIDES[id];
+      else InstrumentGrips.OVERRIDES[id] = orig;
+    }
+
+    function exportJson() {
+      const id = sel.value;
+      const g = currentEdit();
+      const snippet = `'${id}': {
+  gripL: { x: ${g.gripL.x}, y: ${g.gripL.y} },
+  gripR: { x: ${g.gripR.x}, y: ${g.gripR.y} },
+  art: { w: ${g.art.w}, h: ${g.art.h}, anchorX: ${g.art.anchorX}, anchorY: ${g.art.anchorY} },
+  rot: ${g.rot},
+},`;
+      document.getElementById('export').value = snippet;
+    }
+
+    ['gripLx', 'gripLy', 'gripRx', 'gripRy', 'artW', 'artH', 'anchorX', 'anchorY', 'rot'].forEach((fid) => {
+      document.getElementById(fid).addEventListener('input', () => {
+        const g = currentEdit();
+        g.gripL.x = +document.getElementById('gripLx').value;
+        g.gripL.y = +document.getElementById('gripLy').value;
+        g.gripR.x = +document.getElementById('gripRx').value;
+        g.gripR.y = +document.getElementById('gripRy').value;
+        g.art.w = +document.getElementById('artW').value;
+        g.art.h = +document.getElementById('artH').value;
+        g.art.anchorX = +document.getElementById('anchorX').value;
+        g.art.anchorY = +document.getElementById('anchorY').value;
+        g.rot = +document.getElementById('rot').value;
+        renderPreview();
+        exportJson();
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const g = currentEdit();
+      const target = e.shiftKey ? g.gripR : g.gripL;
+      const step = e.altKey ? 5 : 1;
+      if (e.key === 'ArrowLeft') { target.x -= step; e.preventDefault(); }
+      if (e.key === 'ArrowRight') { target.x += step; e.preventDefault(); }
+      if (e.key === 'ArrowUp') { target.y -= step; e.preventDefault(); }
+      if (e.key === 'ArrowDown') { target.y += step; e.preventDefault(); }
+      if (e.key === '[') { g.rot -= 1; e.preventDefault(); }
+      if (e.key === ']') { g.rot += 1; e.preventDefault(); }
+      if (e.key === '=' || e.key === '+') { g.art.w += 2; g.art.h += 2; e.preventDefault(); }
+      if (e.key === '-') { g.art.w = Math.max(20, g.art.w - 2); g.art.h = Math.max(20, g.art.h - 2); e.preventDefault(); }
+      syncFields();
+    });
+
+    sel.addEventListener('change', syncFields);
+    document.getElementById('char-select').addEventListener('change', renderPreview);
+    syncFields();
+  </script>
+</body>
+</html>

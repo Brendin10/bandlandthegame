@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bandland</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css?v=78" />
+</head>
+<body>
+  <div id="app">
+    <header class="hud hidden" id="hud">
+      <div class="hud-brand">
+        <img src="assets/brand/bandland-logo.png" alt="" class="brand-logo" />
+      </div>
+      <div class="hud-stats">
+        <div class="stat-pill cash-pill">
+          <span class="stat-icon">💵</span>
+          <span id="hud-cash">0</span>
+          <span class="stat-label">BandCash</span>
+        </div>
+        <div class="stat-pill star-pill">
+          <span class="stat-icon">⭐</span>
+          <span id="hud-stars">0</span>
+          <span class="stat-label">Star Meter</span>
+        </div>
+      </div>
+    </header>
+
+    <main id="screen-root"></main>
+  </div>
+
+  <div id="stage-curtain" class="stage-curtain curtain-idle" aria-hidden="true">
+    <div class="curtain-panel curtain-left"></div>
+    <div class="curtain-panel curtain-right"></div>
+    <p class="curtain-status" id="curtain-status"></p>
+  </div>
+
+  <div id="gig-results-layer" class="gig-results-layer hidden" aria-hidden="true"></div>
+
+  <script>const SONG_ASSET_VERSION = '78';</script>
+  <script src="js/instrument-grips.js?v=78"></script>
+  <script src="js/instrument-art.js?v=78"></script>
+  <script src="js/instruments.js?v=78"></script>
+  <script src="js/song-manifest.js?v=78"></script>
+  <script src="js/songs.js?v=78"></script>
+  <script src="js/song-loader.js?v=78"></script>
+  <script src="js/stem-player.js?v=78"></script>
+  <script src="js/data.js?v=78"></script>
+  <script src="js/character-rig.js?v=78"></script>
+  <script src="js/characters.js?v=78"></script>
+  <script src="js/wearables.js?v=78"></script>
+  <script src="js/bandmates.js?v=78"></script>
+  <script src="js/audio.js?v=78"></script>
+  <script src="js/audio-samples.js?v=78"></script>
+  <script src="js/metronome.js?v=78"></script>
+  <script src="js/rhythm-lane.js?v=78"></script>
+  <script src="js/bandaudio.js?v=78"></script>
+  <script src="js/venues.js?v=78"></script>
+  <script src="js/save.js?v=78"></script>
+  <script src="js/game.js?v=78"></script>
+</body>
+</html>

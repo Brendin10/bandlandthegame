@@ -1,0 +1,18 @@
+{
+  "id": "neon-lights",
+  "name": "Neon Lights",
+  "emoji": "\ud83c\udf03",
+  "cost": 120,
+  "bpm": 120.19,
+  "durationSec": 60.0,
+  "beatCount": 120,
+  "beatOffset": 0.0,
+  "fullMixVolume": 0.85,
+  "stems": {
+    "Bass": "bass.wav",
+    "Drums": "drums.wav",
+    "Lead": "lead.wav",
+    "Keys": "keys.wav",
+    "Full": "full.wav"
+  }
+}
