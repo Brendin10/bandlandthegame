@@ -99,11 +99,17 @@ const StemPlayer = (() => {
   function sliceDuration(note, songObj, bpm) {
     const beatDur = 60 / bpm;
     const noteDur = (note.dur || 1) * beatDur;
-    if (note.hit === 'kick') return Math.min(noteDur, 0.4);
-    if (note.hit === 'snare') return Math.min(noteDur, 0.48);
-    if (note.hit) return Math.min(noteDur, 0.32);
-    if (note.note || note.chord) return Math.min(Math.max(noteDur, 0.45), 1.1);
-    return Math.min(noteDur, 1.25);
+    // Percussion hits are naturally short, real sounds - a kick/snare hit
+    // genuinely decays within well under half a second, so these caps just
+    // avoid holding the buffer open long after the drum has gone silent.
+    if (note.hit === 'kick') return Math.min(Math.max(noteDur, 0.35), 0.6);
+    if (note.hit === 'snare') return Math.min(Math.max(noteDur, 0.4), 0.7);
+    if (note.hit) return Math.min(Math.max(noteDur, 0.3), 0.55);
+    // Melodic notes/chords (guitar, bass, keys) should ring for their full
+    // written length instead of being chopped down to a "strum" - only
+    // enforce a sensible floor so very short chart notes are still audible.
+    if (note.note || note.chord) return Math.max(noteDur, 0.45);
+    return Math.max(noteDur, 0.3);
   }
 
   function duckBackingForHit() {
@@ -138,8 +144,17 @@ const StemPlayer = (() => {
     src.buffer = buf;
     const gain = ac.createGain();
     const vol = (note.hit ? 1.08 : 1.02) * volScale;
-    gain.gain.setValueAtTime(vol, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.97);
+    // Hold the note at full volume for almost its whole length and only
+    // release right at the tail - ramping the gain down across the entire
+    // duration (the old behaviour) made even a "full length" slice sound
+    // like it was fading out from the moment it started, which read as a
+    // short strum no matter how long `duration` actually was.
+    const attack = Math.min(0.008, duration * 0.2);
+    const release = Math.min(0.12, Math.max(0.03, duration * 0.25));
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(vol, now + attack);
+    gain.gain.setValueAtTime(vol, Math.max(now + attack, now + duration - release));
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
     src.connect(gain);
     gain.connect(playerStemGain);
     src.start(now, offset, duration);
@@ -178,14 +193,19 @@ const StemPlayer = (() => {
     if (!sustainSource) return;
     const ac = getCtx();
     const now = ac.currentTime;
+    // This release is now the only sound marking the end of a held note (the
+    // hit-audio re-trigger that used to fire alongside it was removed since
+    // it duplicated this same note) - give it a touch more tail than the old
+    // 60ms cut so the release still reads as a natural note end.
+    const RELEASE_SEC = 0.12;
     if (sustainGain) {
       try {
         sustainGain.gain.cancelScheduledValues(now);
         sustainGain.gain.setValueAtTime(sustainGain.gain.value, now);
-        sustainGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+        sustainGain.gain.exponentialRampToValueAtTime(0.001, now + RELEASE_SEC);
       } catch { /* already stopped */ }
     }
-    try { sustainSource.stop(now + 0.07); } catch { /* already stopped */ }
+    try { sustainSource.stop(now + RELEASE_SEC + 0.01); } catch { /* already stopped */ }
     sustainSource = null;
     sustainGain = null;
   }

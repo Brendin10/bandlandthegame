@@ -2014,7 +2014,9 @@ const Game = (() => {
     stopInstrumentSustain();
     const zone = document.getElementById('hit-zone');
     if (zone) zone.classList.remove('holding');
-    applyHitScore(rating, note, inst);
+    // Same reasoning as the manual release path: the sustain already sounded
+    // this note, so don't layer a second one-shot on top of it.
+    applyHitScore(rating, note, inst, { skipHitAudio: true });
   }
 
   function checkMissedNotes() {
@@ -2465,7 +2467,9 @@ const Game = (() => {
     const hot = isHotStreak(p);
     const streak = hotStreakMult(p);
     if (note) {
-      playInstrumentHit(note, inst, (rating === 'perfect' ? 1.15 : 1.05) * streak);
+      if (!opts.skipHitAudio) {
+        playInstrumentHit(note, inst, (rating === 'perfect' ? 1.15 : 1.05) * streak);
+      }
       RhythmLane.explodeGem(note, rating, isMelodic, hot);
     } else {
       RhythmLane.explodeGem({ beat: -1 }, rating, isMelodic, hot);
@@ -2579,7 +2583,12 @@ const Game = (() => {
     stopInstrumentSustain();
     const zone = document.getElementById('hit-zone');
     if (zone) zone.classList.remove('holding');
-    applyHitScore(rating, note, inst);
+    // The sustain that's been ringing since press already IS this note's
+    // sound - re-triggering a fresh one-shot hit here would layer a second,
+    // shorter "re-attack" of the same note right on top of its natural
+    // release, which is exactly the extra/duplicate sound this was meant to
+    // avoid. Score and animate the release normally, just don't play audio.
+    applyHitScore(rating, note, inst, { skipHitAudio: true });
   }
 
   function onPlayNote() {
