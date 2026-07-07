@@ -365,6 +365,17 @@ const Game = (() => {
   function setScreen(name) {
     state.screen = name;
     if (name === 'shop') state.shopTab = state.shopTab || 'instruments';
+    // Safety net: the stage curtain is a full-viewport overlay that's meant
+    // to be interactive only mid-transition into a gig. If anything ever
+    // leaves it in an active state (a missed edge case, an error mid-intro),
+    // it would silently swallow every click on whatever screen is
+    // underneath - looking exactly like "the buttons don't work". Since the
+    // curtain should only ever be active while state.gigIntroRunning is true
+    // and we're heading into 'perform', force it closed for every other
+    // screen we land on.
+    if (name !== 'perform' && !state.gigIntroRunning) {
+      dismissStageCurtain();
+    }
     updateHud();
     render();
   }
@@ -1479,6 +1490,14 @@ const Game = (() => {
     });
   }
 
+  // Every clickable control in this game is a real <button>, so a single
+  // selector covers navigation, selection chips, tabs, toggles, back
+  // buttons, etc. - and automatically covers any button added later too.
+  const UI_CLICK_SELECTOR = 'button';
+  // Buttons that already trigger their own distinct sound effect on press -
+  // adding the generic UI click on top would just muddy those cues.
+  const UI_CLICK_EXCLUDE_IDS = new Set(['btn-play-note', 'btn-tap-lid']);
+
   function bindEvents() {
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => document.querySelectorAll(sel);
@@ -1493,6 +1512,11 @@ const Game = (() => {
       document.addEventListener('click', (e) => {
         const shopPreview = e.target.closest('.shop-preview-btn[data-preview-inst]');
         if (shopPreview) e.stopPropagation();
+      });
+      document.addEventListener('click', (e) => {
+        const el = e.target.closest(UI_CLICK_SELECTOR);
+        if (!el || el.disabled || UI_CLICK_EXCLUDE_IDS.has(el.id)) return;
+        AudioEngine.playUIClick?.();
       });
       navigationListenerAttached = true;
     }
@@ -2359,9 +2383,21 @@ const Game = (() => {
     if (state.suppressPerformUntil && performance.now() < state.suppressPerformUntil) return;
     if (state.gigIntroRunning) return;
     state.gigIntroRunning = true;
-    runGigIntroSequence().finally(() => {
-      if (state.performance) state.gigIntroRunning = false;
-    });
+    runGigIntroSequence()
+      .catch((err) => {
+        // If the intro throws before state.performance ever gets created
+        // (e.g. song/stem loading fails), nothing else clears
+        // gigIntroRunning, which would otherwise permanently lock out the
+        // "Play Gig" button. Make sure a failed attempt always recovers.
+        console.error('Failed to start gig:', err);
+        state.gigIntroRunning = false;
+        dismissStageCurtain();
+        const btn = document.getElementById('btn-perform');
+        if (btn) btn.disabled = false;
+      })
+      .finally(() => {
+        if (state.performance) state.gigIntroRunning = false;
+      });
   }
 
   function isRhythmScoringEnabled() {

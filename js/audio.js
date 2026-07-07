@@ -1776,10 +1776,26 @@ const AudioEngine = (() => {
     osc.stop(now + 0.14);
   }
 
+  // Soft confirm "tap" played on any UI button/selection click (menus, shop,
+  // back buttons, etc). Kept short, quiet, and on the dry 'perc' bus so it
+  // never competes with gameplay/instrument audio.
+  function playUIClick(vol = 1) {
+    const ac = getCtx();
+    const now = ac.currentTime;
+    const osc = ac.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1400, now);
+    osc.frequency.exponentialRampToValueAtTime(950, now + 0.045);
+    const g = masterGain(ac, now, 0.09 * vol, 0.06, 0, 'perc');
+    osc.connect(g);
+    osc.start(now);
+    osc.stop(now + 0.06);
+  }
+
   return {
     resume, getCtx, initMix, getMix, connectToMix,
     setMasterVolume, getMasterVolume, unlockIOSAudioSession,
-    playCrash, playCheer, playCheerLoud, playCoin, playMiss, playTick, playHitBurst,
+    playCrash, playCheer, playCheerLoud, playCoin, playMiss, playTick, playUIClick, playHitBurst,
     playInstrument, playPartEvent, playSongPad, startSustain, stopSustain,
     startCrowdAmbience, stopCrowdAmbience, endCrowdIntro, setCrowdBooing, setHotStreakCheering, boostCrowdCheer, playBoo, playCrowdSample, loadCheerSample, loadBooSample, loadRewindSample, playRewindSfx, stopRewindSfx,
     playLiveBass, playLiveShimmer, playLiveStrum, playDanceBeat, playDrumStyleBeat, playFourOnFloorKick,
