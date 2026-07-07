@@ -3,11 +3,211 @@ function layerSvg(content, extraClass = '') {
 }
 
 function backdropLayers(venueId, layers) {
-  const names = ['far', 'mid', 'near', 'front'];
+  const names = ['far', 'mid', 'near', 'front', 'decor'];
   const html = layers.map((content, i) =>
     `<div class="backdrop-layer layer-${names[i]}">${layerSvg(content)}</div>`
   ).join('');
   return `<div class="venue-backdrop venue-${venueId}" data-venue="${venueId}" aria-hidden="true">${html}<div class="backdrop-vignette"></div></div>`;
+}
+
+/* ---------- Decor layer: guitar case + on-brand set dressing ----------
+ * A fifth, closest-to-camera layer that sits in front of everything else.
+ * Every venue gets the same open guitar case (the busking "tip jar")
+ * front-and-center, flanked by two venue-themed props. Handcrafted venues
+ * get hand-picked props; procedurally generated venues get a medallion of
+ * their own emoji (guaranteed on-brand) plus a prop matched by keywords in
+ * their name, so every stage - even the auto-generated ones - reads as
+ * decorated for that specific place rather than reused generic dressing. */
+
+function svgGuitarCase(cx = 400, cy = 380, scale = 0.9) {
+  return `
+    <g transform="translate(${cx},${cy}) scale(${scale})">
+      <ellipse cx="0" cy="26" rx="88" ry="13" fill="rgba(0,0,0,0.3)"/>
+      <path d="M-76,-4 L-68,-54 Q-68,-60 -58,-60 L56,-60 Q66,-60 64,-52 L76,-4 Z" fill="#3a2418" stroke="#22140c" stroke-width="3"/>
+      <path d="M-66,-8 L-60,-50 Q-60,-54 -53,-54 L50,-54 Q58,-54 56,-47 L66,-8 Z" fill="#7a1f2e"/>
+      <path d="M-80,-2 Q-80,6 -74,8 L-48,20 Q0,29 48,20 L74,8 Q80,6 80,-2 Q56,10 0,10 Q-56,10 -80,-2 Z" fill="#2a1810" stroke="#1a0e08" stroke-width="3"/>
+      <ellipse cx="0" cy="-2" rx="78" ry="14" fill="#4a2c1c" stroke="#1a0e08" stroke-width="3"/>
+      <ellipse cx="0" cy="-2" rx="66" ry="10" fill="#8a1f30"/>
+      <ellipse cx="-18" cy="-2" rx="16" ry="6" fill="#6b1522" opacity="0.6"/>
+      <ellipse cx="22" cy="-2" rx="22" ry="7" fill="#6b1522" opacity="0.6"/>
+      <ellipse cx="-8" cy="0" rx="6" ry="2.6" fill="#ffd166" stroke="#c99a30" stroke-width="1"/>
+      <ellipse cx="4" cy="2" rx="5.5" ry="2.4" fill="#e8c070" stroke="#c99a30" stroke-width="1"/>
+      <rect x="-30" y="-4" width="16" height="8" rx="1.5" fill="#8fce8f" stroke="#4a8a4a" stroke-width="1" transform="rotate(-8 -22 0)"/>
+      <rect x="16" y="-3" width="15" height="7.5" rx="1.5" fill="#8fce8f" stroke="#4a8a4a" stroke-width="1" transform="rotate(10 23 1)"/>
+      <ellipse cx="30" cy="1" rx="4.5" ry="2" fill="#ffd166" stroke="#c99a30" stroke-width="1"/>
+    </g>`;
+}
+
+function svgEmojiMedallion(cx, cy, emoji, accent = '#d4a050') {
+  return `
+    <g transform="translate(${cx},${cy})">
+      <ellipse cx="0" cy="4" rx="20" ry="6" fill="rgba(0,0,0,0.22)"/>
+      <rect x="-4" y="-64" width="8" height="64" fill="#4a3020"/>
+      <circle cx="0" cy="-78" r="34" fill="#3a2418" stroke="${accent}" stroke-width="4"/>
+      <circle cx="0" cy="-78" r="26" fill="#221408"/>
+      <text x="0" y="-68" text-anchor="middle" font-size="28">${emoji}</text>
+    </g>`;
+}
+
+function svgAmpStack(cx, cy, accent = '#ffd166') {
+  return `
+    <g transform="translate(${cx},${cy})">
+      <ellipse cx="0" cy="6" rx="34" ry="8" fill="rgba(0,0,0,0.28)"/>
+      <rect x="-32" y="-70" width="64" height="76" rx="4" fill="#241a14" stroke="#120c08" stroke-width="3"/>
+      <rect x="-32" y="-6" width="64" height="10" fill="#120c08"/>
+      <circle cx="0" cy="-32" r="22" fill="#141014" stroke="#000" stroke-width="2"/>
+      <circle cx="0" cy="-32" r="15" fill="#2a2226"/>
+      <rect x="-32" y="-108" width="64" height="42" rx="4" fill="#2c211a" stroke="#120c08" stroke-width="3"/>
+      <circle cx="0" cy="-87" r="15" fill="#141014" stroke="#000" stroke-width="2"/>
+      <circle cx="0" cy="-87" r="10" fill="#2a2226"/>
+      <circle cx="-22" cy="-98" r="2.4" fill="${accent}" opacity="0.85"/>
+    </g>`;
+}
+
+function svgPottedPlant(cx, cy, leaf = '#5a9a5a') {
+  return `
+    <g transform="translate(${cx},${cy})">
+      <ellipse cx="0" cy="6" rx="26" ry="7" fill="rgba(0,0,0,0.25)"/>
+      <path d="M-20,0 L20,0 L15,-32 L-15,-32 Z" fill="#8b6040" stroke="#5a4030" stroke-width="2"/>
+      <ellipse cx="0" cy="-32" rx="16" ry="5" fill="#a07850"/>
+      <path d="M0,-32 Q-6,-70 -30,-84" stroke="${leaf}" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M0,-32 Q8,-76 34,-88" stroke="${leaf}" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M0,-32 Q0,-82 0,-98" stroke="${leaf}" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <ellipse cx="-30" cy="-86" rx="14" ry="9" fill="${leaf}"/>
+      <ellipse cx="34" cy="-90" rx="15" ry="9" fill="${leaf}"/>
+      <ellipse cx="0" cy="-100" rx="12" ry="9" fill="${leaf}"/>
+    </g>`;
+}
+
+function svgFlagBanner(cx, cy, accent = '#e85a8a', label = '') {
+  return `
+    <g transform="translate(${cx},${cy})">
+      <ellipse cx="0" cy="4" rx="10" ry="4" fill="rgba(0,0,0,0.22)"/>
+      <rect x="-4" y="-120" width="8" height="124" fill="#5a4a3a"/>
+      <path d="M4,-120 L70,-104 L4,-88 Z" fill="${accent}" stroke="#00000022" stroke-width="1"/>
+      ${label ? `<text x="12" y="-100" font-family="Fredoka,sans-serif" font-size="13" font-weight="700" fill="#fff" opacity="0.9">${label}</text>` : ''}
+      <circle cx="0" cy="-122" r="5" fill="${accent}"/>
+    </g>`;
+}
+
+function svgLanternString(cx, cy, accent = '#ffb347') {
+  return `
+    <g transform="translate(${cx},${cy})">
+      <ellipse cx="-46" cy="4" rx="8" ry="3" fill="rgba(0,0,0,0.2)"/>
+      <ellipse cx="46" cy="4" rx="8" ry="3" fill="rgba(0,0,0,0.2)"/>
+      <rect x="-48" y="-86" width="4" height="90" fill="#4a3020"/>
+      <rect x="44" y="-86" width="4" height="90" fill="#4a3020"/>
+      <path d="M-46,-86 Q0,-54 46,-86" stroke="#4a3020" stroke-width="2" fill="none"/>
+      <g>
+        <line x1="-28" y1="-78" x2="-28" y2="-66" stroke="#4a3020" stroke-width="2"/>
+        <ellipse cx="-28" cy="-58" rx="11" ry="14" fill="${accent}" opacity="0.9"/>
+        <ellipse cx="-28" cy="-58" rx="17" ry="19" fill="${accent}" opacity="0.2"/>
+      </g>
+      <g>
+        <line x1="0" y1="-58" x2="0" y2="-46" stroke="#4a3020" stroke-width="2"/>
+        <ellipse cx="0" cy="-36" rx="12" ry="15" fill="${accent}" opacity="0.95"/>
+        <ellipse cx="0" cy="-36" rx="19" ry="21" fill="${accent}" opacity="0.22"/>
+      </g>
+      <g>
+        <line x1="28" y1="-70" x2="28" y2="-58" stroke="#4a3020" stroke-width="2"/>
+        <ellipse cx="28" cy="-50" rx="11" ry="14" fill="${accent}" opacity="0.9"/>
+        <ellipse cx="28" cy="-50" rx="17" ry="19" fill="${accent}" opacity="0.2"/>
+      </g>
+    </g>`;
+}
+
+function svgCrateStack(cx, cy) {
+  return `
+    <g transform="translate(${cx},${cy})">
+      <ellipse cx="0" cy="4" rx="34" ry="8" fill="rgba(0,0,0,0.25)"/>
+      <rect x="-30" y="-30" width="60" height="34" fill="#8b6a45" stroke="#5a4025" stroke-width="2"/>
+      <line x1="-30" y1="-13" x2="30" y2="-13" stroke="#5a4025" stroke-width="2"/>
+      <line x1="-15" y1="-30" x2="-15" y2="4" stroke="#5a4025" stroke-width="2"/>
+      <line x1="15" y1="-30" x2="15" y2="4" stroke="#5a4025" stroke-width="2"/>
+      <rect x="-22" y="-58" width="44" height="28" fill="#9a7a50" stroke="#5a4025" stroke-width="2" transform="rotate(-4 0 -44)"/>
+    </g>`;
+}
+
+function svgStarBanner(cx, cy, accent = '#d4a050') {
+  const star = (r1, r2) => {
+    const pts = [];
+    for (let i = 0; i < 10; i++) {
+      const r = i % 2 === 0 ? r1 : r2;
+      const a = (Math.PI / 5) * i - Math.PI / 2;
+      pts.push(`${(r * Math.cos(a)).toFixed(1)},${(r * Math.sin(a)).toFixed(1)}`);
+    }
+    return pts.join(' ');
+  };
+  return `
+    <g transform="translate(${cx},${cy})">
+      <ellipse cx="0" cy="4" rx="10" ry="4" fill="rgba(0,0,0,0.2)"/>
+      <rect x="-4" y="-100" width="8" height="104" fill="#4a3a2a"/>
+      <polygon points="${star(30, 13)}" fill="${accent}" stroke="#00000030" stroke-width="2" transform="translate(0,-118)"/>
+      <polygon points="${star(30, 13)}" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.4" transform="translate(0,-118)"/>
+    </g>`;
+}
+
+function svgBarrelKeg(cx, cy) {
+  return `
+    <g transform="translate(${cx},${cy})">
+      <ellipse cx="0" cy="6" rx="28" ry="8" fill="rgba(0,0,0,0.25)"/>
+      <path d="M-24,0 Q-30,-30 -24,-58 Q0,-66 24,-58 Q30,-30 24,0 Q0,8 -24,0 Z" fill="#8b5a2b" stroke="#5a3818" stroke-width="3"/>
+      <ellipse cx="0" cy="0" rx="24" ry="8" fill="#6a4020" opacity="0.4"/>
+      <rect x="-30" y="-42" width="60" height="8" fill="#3a2818"/>
+      <rect x="-28" y="-16" width="56" height="8" fill="#3a2818"/>
+    </g>`;
+}
+
+function svgTrophyPedestal(cx, cy, accent = '#d4a050') {
+  return `
+    <g transform="translate(${cx},${cy})">
+      <ellipse cx="0" cy="6" rx="24" ry="7" fill="rgba(0,0,0,0.25)"/>
+      <rect x="-20" y="-24" width="40" height="30" fill="#5a4a70" stroke="#3a2a50" stroke-width="2"/>
+      <rect x="-4" y="-40" width="8" height="18" fill="${accent}"/>
+      <path d="M-14,-70 Q-14,-48 0,-42 Q14,-48 14,-70 L10,-70 Q10,-54 0,-50 Q-10,-54 -10,-70 Z" fill="${accent}" stroke="#8a6030" stroke-width="1.5"/>
+      <path d="M-14,-68 Q-26,-68 -26,-56 Q-26,-48 -14,-48" fill="none" stroke="${accent}" stroke-width="3"/>
+      <path d="M14,-68 Q26,-68 26,-56 Q26,-48 14,-48" fill="none" stroke="${accent}" stroke-width="3"/>
+    </g>`;
+}
+
+function svgAnchorBuoy(cx, cy, accent = '#cc3333') {
+  return `
+    <g transform="translate(${cx},${cy})">
+      <ellipse cx="0" cy="4" rx="16" ry="6" fill="rgba(0,0,0,0.22)"/>
+      <rect x="-10" y="-56" width="20" height="16" rx="10" fill="${accent}" stroke="#8b2020" stroke-width="2"/>
+      <rect x="-10" y="-40" width="20" height="16" rx="10" fill="#f5f0e8" stroke="#8b2020" stroke-width="2"/>
+      <rect x="-10" y="-24" width="20" height="16" rx="10" fill="${accent}" stroke="#8b2020" stroke-width="2"/>
+      <circle cx="0" cy="-64" r="7" fill="none" stroke="#3a3a3a" stroke-width="3"/>
+    </g>`;
+}
+
+function svgDiscoBallProp(cx, groundY, accent = '#6bcbff') {
+  const ballY = groundY - 60;
+  return `
+    <line x1="${cx}" y1="0" x2="${cx}" y2="${ballY - 24}" stroke="#3a3a3a" stroke-width="2"/>
+    <circle cx="${cx}" cy="${ballY}" r="24" fill="#c8d0d8" stroke="#8a92a0" stroke-width="2"/>
+    ${Array.from({ length: 4 }, (_, i) => `<line x1="${cx - 24}" y1="${ballY - 15 + i * 8}" x2="${cx + 24}" y2="${ballY - 15 + i * 8}" stroke="#8a92a0" stroke-width="1" opacity="0.5"/>`).join('')}
+    ${Array.from({ length: 4 }, (_, i) => `<line x1="${cx - 18 + i * 12}" y1="${ballY - 24}" x2="${cx - 18 + i * 12}" y2="${ballY + 24}" stroke="#8a92a0" stroke-width="1" opacity="0.5"/>`).join('')}
+    <circle cx="${cx - 8}" cy="${ballY - 8}" r="3" fill="${accent}" opacity="0.85"/>
+    <circle cx="${cx + 9}" cy="${ballY + 6}" r="2.5" fill="#fff" opacity="0.9"/>
+    <ellipse cx="${cx}" cy="${groundY + 4}" rx="18" ry="6" fill="rgba(0,0,0,0.18)"/>`;
+}
+
+function composeDecorLayer(leftFn, rightFn) {
+  return `${leftFn(92, 374)}${svgGuitarCase(400, 384, 0.85)}${rightFn(708, 374)}`;
+}
+
+function pickGenericProp(name) {
+  const n = (name || '').toLowerCase();
+  if (/night ?club/.test(n)) return (cx, cy) => svgDiscoBallProp(cx, cy, '#ff6b9d');
+  if (/crystal/.test(n)) return (cx, cy) => svgDiscoBallProp(cx, cy, '#9ac8e8');
+  if (/river|amphitheat|harbor|pier/.test(n)) return (cx, cy) => svgAnchorBuoy(cx, cy);
+  if (/campus|green|rooftop/.test(n)) return (cx, cy) => svgPottedPlant(cx, cy);
+  if (/castle|stadium|fair|arena|fest|global/.test(n)) return (cx, cy) => svgFlagBanner(cx, cy, '#6bcbff');
+  if (/cellar|market/.test(n)) return (cx, cy) => svgLanternString(cx, cy);
+  if (/theater|playhouse/.test(n)) return (cx, cy) => svgStarBanner(cx, cy);
+  if (/world|biggest/.test(n)) return (cx, cy) => svgTrophyPedestal(cx, cy);
+  return (cx, cy) => svgAmpStack(cx, cy);
 }
 
 const VENUE_BACKDROPS = {
@@ -83,6 +283,12 @@ const VENUE_BACKDROPS = {
     <!-- foreground haze -->
     <rect y="340" width="800" height="60" fill="url(#st-fog)" opacity="0.15"/>
     <defs><linearGradient id="st-fog" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f5d89a" stop-opacity="0"/><stop offset="100%" stop-color="#f5d89a"/></linearGradient></defs>`,
+
+    /* DECOR — guitar case out for tips, flanked by street set-dressing */
+    composeDecorLayer(
+      (cx, cy) => svgCrateStack(cx, cy),
+      (cx, cy) => svgFlagBanner(cx, cy, '#ffe9a0', 'TIPS'),
+    ),
   ]),
 
   'local-tavern': () => backdropLayers('local-tavern', [
@@ -167,6 +373,12 @@ const VENUE_BACKDROPS = {
     <ellipse cx="684" cy="368" rx="40" ry="10" fill="rgba(0,0,0,0.25)"/>
     <!-- warm fog -->
     <rect y="370" width="800" height="30" fill="#ffb347" opacity="0.06"/>`,
+
+    /* DECOR — guitar case out for tips, flanked by tavern set-dressing */
+    composeDecorLayer(
+      (cx, cy) => svgBarrelKeg(cx, cy),
+      (cx, cy) => svgLanternString(cx, cy, '#ffb347'),
+    ),
   ]),
 
   'town-square': () => backdropLayers('town-square', [
@@ -249,6 +461,12 @@ const VENUE_BACKDROPS = {
     <ellipse cx="312" cy="308" rx="14" ry="12" fill="#ff8ab0"/>
     <ellipse cx="338" cy="306" rx="12" ry="10" fill="#ffd166"/>
     <rect y="355" width="800" height="45" fill="#8aab7a" opacity="0.35"/>`,
+
+    /* DECOR — guitar case out for tips, flanked by town-square set-dressing */
+    composeDecorLayer(
+      (cx, cy) => svgPottedPlant(cx, cy, '#5a9a5a'),
+      (cx, cy) => svgFlagBanner(cx, cy, '#e85a8a'),
+    ),
   ]),
 
   'talent-show': () => backdropLayers('talent-show', [
@@ -307,6 +525,12 @@ const VENUE_BACKDROPS = {
     <rect x="635" y="340" width="45" height="32" rx="3" fill="#222" stroke="#111" stroke-width="2"/>
     <ellipse cx="400" cy="395" rx="300" ry="20" fill="rgba(0,0,0,0.2)"/>
     <rect y="370" width="800" height="30" fill="#1a0a2e" opacity="0.35"/>`,
+
+    /* DECOR — guitar case out for tips, flanked by showbiz set-dressing */
+    composeDecorLayer(
+      (cx, cy) => svgTrophyPedestal(cx, cy, '#d4a050'),
+      (cx, cy) => svgStarBanner(cx, cy, '#d4a050'),
+    ),
   ]),
 
   'small-concert-venue': () => backdropLayers('small-concert-venue', [
@@ -367,6 +591,12 @@ const VENUE_BACKDROPS = {
     <!-- fog wisps -->
   <ellipse cx="150" cy="370" rx="100" ry="25" fill="#6a40a0" opacity="0.12"/>
     <ellipse cx="600" cy="375" rx="120" ry="28" fill="#4060a0" opacity="0.1"/>`,
+
+    /* DECOR — guitar case out for tips, flanked by concert set-dressing */
+    composeDecorLayer(
+      (cx, cy) => svgAmpStack(cx, cy, '#ff6b9d'),
+      (cx, cy) => svgDiscoBallProp(cx, cy, '#6bcbff'),
+    ),
   ]),
 };
 
@@ -448,7 +678,15 @@ function generateTierBackdrop(venue) {
     <ellipse cx="600" cy="375" rx="110" ry="25" fill="${p.accent}" opacity="0.06"/>
     <rect y="360" width="800" height="40" fill="#000" opacity="${0.12 + t * 0.008}"/>`;
 
-  return backdropLayers(venue.id, [far, mid, near, front]);
+  // DECOR — guitar case out for tips; one side is always a medallion of the
+  // venue's own emoji (guaranteed on-brand for any name), the other is a
+  // prop matched by keyword against the venue name.
+  const decor = composeDecorLayer(
+    (cx, cy) => svgEmojiMedallion(cx, cy, venue.emoji, p.accent),
+    pickGenericProp(venue.name),
+  );
+
+  return backdropLayers(venue.id, [far, mid, near, front, decor]);
 }
 
 function renderStageLighting(tier = 0) {
@@ -531,7 +769,7 @@ function initVenueParallax(root = document) {
   const layers = backdrop.querySelectorAll('.backdrop-layer');
   if (!layers.length) return () => {};
 
-  const depth = [0.25, 0.5, 0.75, 1];
+  const depth = [0.25, 0.5, 0.75, 1, 1.15];
   let raf = null;
   let targetX = 0;
   let targetY = 0;
