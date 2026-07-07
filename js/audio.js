@@ -8,6 +8,7 @@ const AudioEngine = (() => {
   let crowdBus = null;
   let masterVolumeGain = null;
   let masterVolumeValue = 1;
+  let reverbSend = null; // was previously assigned without a declaration in initMix(), leaking an implicit global
 
   const CHORD_ROOT = {
     C: 'C2', G: 'G1', Am: 'A1', F: 'F1', E: 'E2', B: 'B1',
@@ -87,6 +88,59 @@ const AudioEngine = (() => {
     const ac = getCtx();
     if (ac.state === 'suspended') return ac.resume().then(() => ac);
     return Promise.resolve(ac);
+  }
+
+  let silentUnlockAudio = null;
+
+  // Fix for: "no sound on iPhone even with volume up / mute switch aside".
+  // Safari puts raw Web Audio API output in the "ambient" audio session
+  // category by default, which the physical mute switch silences — separate
+  // from the ringer/media volume, and separate from resuming the AudioContext
+  // (resume() just un-suspends processing, it doesn't change the session
+  // category). Playing any real <audio>/<video> element switches the page's
+  // session to "playback", which iOS does not mute with the switch, and every
+  // other Web Audio node on the page starts being heard too. We generate a
+  // tiny silent WAV in memory (no network request, no asset needed) and loop
+  // it forever once, started from the same user gesture that unlocks audio.
+  function unlockIOSAudioSession() {
+    if (silentUnlockAudio) return;
+    try {
+      const sampleRate = 8000;
+      const numSamples = 800; // 0.1s of silence
+      const buffer = new ArrayBuffer(44 + numSamples * 2);
+      const view = new DataView(buffer);
+      const writeStr = (offset, str) => {
+        for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+      };
+      writeStr(0, 'RIFF');
+      view.setUint32(4, 36 + numSamples * 2, true);
+      writeStr(8, 'WAVE');
+      writeStr(12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true); // PCM
+      view.setUint16(22, 1, true); // mono
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true); // byte rate
+      view.setUint16(32, 2, true); // block align
+      view.setUint16(34, 16, true); // bits per sample
+      writeStr(36, 'data');
+      view.setUint32(40, numSamples * 2, true);
+      // Sample bytes are already zero-initialized by ArrayBuffer — true silence.
+
+      const blob = new Blob([buffer], { type: 'audio/wav' });
+      const audio = new Audio();
+      audio.src = URL.createObjectURL(blob);
+      audio.loop = true;
+      audio.preload = 'auto';
+      audio.setAttribute('playsinline', '');
+      audio.style.display = 'none';
+      document.body.appendChild(audio);
+      const playResult = audio.play();
+      if (playResult?.catch) playResult.catch(() => {});
+      silentUnlockAudio = audio;
+    } catch (err) {
+      console.warn('iOS silent-switch audio unlock failed', err);
+    }
   }
 
   function initMix() {
@@ -1724,7 +1778,7 @@ const AudioEngine = (() => {
 
   return {
     resume, getCtx, initMix, getMix, connectToMix,
-    setMasterVolume, getMasterVolume,
+    setMasterVolume, getMasterVolume, unlockIOSAudioSession,
     playCrash, playCheer, playCheerLoud, playCoin, playMiss, playTick, playHitBurst,
     playInstrument, playPartEvent, playSongPad, startSustain, stopSustain,
     startCrowdAmbience, stopCrowdAmbience, endCrowdIntro, setCrowdBooing, setHotStreakCheering, boostCrowdCheer, playBoo, playCrowdSample, loadCheerSample, loadBooSample, loadRewindSample, playRewindSfx, stopRewindSfx,

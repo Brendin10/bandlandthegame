@@ -758,10 +758,22 @@ const Game = (() => {
 
   function crowdAppeal() {
     let bonus = 0;
+    // Equipped gear counts at full value — it's what's actually on stage.
+    // Owned-but-benched items still count a little (so shopping isn't wasted),
+    // but the loadout choice is what should really move the needle.
+    const equippedIds = [
+      state.equippedInstrument,
+      state.equippedSong,
+      state.equippedWear?.clothes,
+      state.equippedWear?.makeup,
+      state.equippedWear?.accessories,
+    ].filter(Boolean);
+
     for (const cat of Object.keys(state.inventories)) {
       for (const itemId of state.inventories[cat]) {
         const item = SHOP_ITEMS[cat].find((i) => i.id === itemId);
-        if (item) bonus += item.crowdBonus;
+        if (!item) continue;
+        bonus += equippedIds.includes(itemId) ? item.crowdBonus : item.crowdBonus * 0.15;
       }
     }
     bonus += getGigBandMembers().length * 8;
@@ -1695,8 +1707,11 @@ const Game = (() => {
     AudioEngine.playBoo?.();
     setTimeout(() => AudioEngine.playBoo?.(), 200);
     setTimeout(() => AudioEngine.playBoo?.(), 450);
-    state.bandCash = Math.max(0, state.bandCash - Math.floor(p.sessionCash * 0.3));
-    p.sessionCash = Math.floor(p.sessionCash * 0.4);
+    // Deduct once and reuse the same number for the "kept" display below, so the
+    // results screen can never show a kept-amount that doesn't match the wallet.
+    const booPenalty = Math.floor(p.sessionCash * 0.6);
+    state.bandCash = Math.max(0, state.bandCash - booPenalty);
+    p.sessionCash = Math.max(0, p.sessionCash - booPenalty);
     snapshotPendingGigResults(p);
     persist();
     state.pendingGigEndMode = 'booed';
@@ -1988,7 +2003,7 @@ const Game = (() => {
     const isMelodic = inst.type === 'melodic';
     const elapsed = Metronome.getElapsed();
     const beatDur = 60 / p.bpm;
-    const lateSec = (isMelodic ? 0.24 : 0.2) * beatDur;
+    const { tapLate: lateSec, holdLate: holdLateWindow } = getHitWindows(isMelodic, p.bpm);
     const leadInBeat = p.leadInBeat ?? 0;
     const songElapsed = getSongPlayElapsed(elapsed, GIG_COUNTDOWN_SEC);
     if (!p.countdownEnded || elapsed < GIG_COUNTDOWN_SEC) return;
@@ -2012,7 +2027,7 @@ const Game = (() => {
       const dur = ev.dur || 1;
       const durSec = dur * beatDur;
       const isHold = dur > 1.05;
-      const holdLateSec = (isMelodic ? 0.5 : 0.45) * beatDur;
+      const holdLateSec = holdLateWindow;
       const missAfterElapsed = isHold
         ? hitElapsed + durSec + holdLateSec * 0.25
         : hitElapsed + lateSec;
@@ -2481,11 +2496,7 @@ const Game = (() => {
     const { rating, note, phase } = rateNotePress(notes, elapsed, p.bpm, isMelodic, p.hitBeats, GIG_COUNTDOWN_SEC, song, p.leadInBeat ?? 0);
 
     if (!note || rating === 'miss') {
-      const beatDur = 60 / p.bpm;
-      const tapLate = (isMelodic ? 0.24 : 0.2) * beatDur;
-      const tapEarly = (isMelodic ? 0.14 : 0.12) * beatDur;
-      const holdLate = (isMelodic ? 0.5 : 0.45) * beatDur;
-      const holdEarly = (isMelodic ? 0.42 : 0.38) * beatDur;
+      const { tapLate, tapEarly, holdLate, holdEarly } = getHitWindows(isMelodic, p.bpm);
       const songElapsed = getSongPlayElapsed(elapsed, GIG_COUNTDOWN_SEC);
       const hittable = notes.some((n) => {
         const distSec = (n.hitElapsed ?? 0) - songElapsed;
@@ -2570,8 +2581,16 @@ const Game = (() => {
       p.timeLeft -= 1;
     }
 
+    // Crowd decay must scale by real elapsed time, not by tick count: the
+    // interval driving this function switches from 1000ms to 250ms ticks in
+    // the last 5 seconds of a gig (see updatePerformanceUI), so a flat
+    // per-tick decrement was quietly draining the crowd meter 4x faster right
+    // before every gig ended.
+    const decayNow = performance.now();
+    const decayDt = p.lastCrowdDecayAt ? (decayNow - p.lastCrowdDecayAt) / 1000 : 1;
+    p.lastCrowdDecayAt = decayNow;
     if (p.crowd > 2) {
-      p.crowd = Math.max(2, p.crowd - 0.15);
+      p.crowd = Math.max(2, p.crowd - 0.15 * decayDt);
     }
 
     if (p.timeLeft <= 0) {
@@ -2649,6 +2668,14 @@ const Game = (() => {
       if (unlocked) return;
       unlocked = true;
       AudioEngine.resume();
+      // iPhones with the physical mute (ring/silent) switch flipped to silent
+      // will play zero sound from raw Web Audio API nodes, even at full volume
+      // and even though other apps/media are unaffected — Safari treats
+      // AudioContext output as "ambient" audio by default, which the mute
+      // switch silences. Starting a real (silent) <audio> element flips the
+      // page's audio session into "playback" mode, which iOS does NOT mute
+      // with the switch, and the whole page's Web Audio output inherits that.
+      AudioEngine.unlockIOSAudioSession?.();
       document.removeEventListener('pointerdown', unlock, true);
       document.removeEventListener('touchstart', unlock, true);
       document.removeEventListener('keydown', unlock, true);

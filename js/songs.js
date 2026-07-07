@@ -140,14 +140,25 @@ function getUpcomingNotes(song, partKey, elapsed, bpm, lookAhead, hitBeats, miss
   return notes.sort((a, b) => a.hitElapsed - b.hitElapsed);
 }
 
-function rateNotePress(notes, elapsed, bpm, isMelodic, hitBeats, countdownSec = 4, song = null, leadInBeat = 0) {
+// Centralized hit-window tuning. These tap/hold windows used to be hand-copied
+// in three places (here, plus checkMissedNotes and onNotePress in game.js), so
+// tuning one without the others would silently desync miss-detection from
+// press-detection. Anything reading timing windows should call this.
+function getHitWindows(isMelodic, bpm) {
   const beatDur = 60 / bpm;
+  return {
+    beatDur,
+    tapLate: (isMelodic ? 0.24 : 0.2) * beatDur,
+    tapEarly: (isMelodic ? 0.14 : 0.12) * beatDur,
+    holdLate: (isMelodic ? 0.5 : 0.45) * beatDur,
+    holdEarly: (isMelodic ? 0.42 : 0.38) * beatDur,
+    perfect: (isMelodic ? 0.14 : 0.12) * beatDur,
+  };
+}
+
+function rateNotePress(notes, elapsed, bpm, isMelodic, hitBeats, countdownSec = 4, song = null, leadInBeat = 0) {
   const songElapsed = getSongPlayElapsed(elapsed, countdownSec);
-  const tapLate = (isMelodic ? 0.24 : 0.2) * beatDur;
-  const tapEarly = (isMelodic ? 0.14 : 0.12) * beatDur;
-  const holdLate = (isMelodic ? 0.5 : 0.45) * beatDur;
-  const holdEarly = (isMelodic ? 0.42 : 0.38) * beatDur;
-  const perfect = (isMelodic ? 0.14 : 0.12) * beatDur;
+  const { beatDur, tapLate, tapEarly, holdLate, holdEarly, perfect } = getHitWindows(isMelodic, bpm);
   let best = null;
   let bestDist = Infinity;
   let bestPhase = 'press';
