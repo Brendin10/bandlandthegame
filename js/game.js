@@ -2582,8 +2582,89 @@ const Game = (() => {
     updatePerformanceUI();
   }
 
+  function initSettingsUI() {
+    const gearBtn = document.getElementById('btn-settings-gear');
+    const overlay = document.getElementById('settings-modal-overlay');
+    const closeBtn = document.getElementById('settings-close-btn');
+    const slider = document.getElementById('settings-volume-slider');
+    const valueLabel = document.getElementById('settings-volume-value');
+    const muteBtn = document.getElementById('settings-mute-btn');
+    if (!gearBtn || !overlay || !slider) return;
+
+    let volumeBeforeMute = null;
+
+    const currentVolume = () => (typeof AudioEngine !== 'undefined' ? AudioEngine.getMasterVolume() : 1);
+
+    const syncUI = () => {
+      const pct = Math.round(currentVolume() * 100);
+      slider.value = String(pct);
+      valueLabel.textContent = `${pct}%`;
+      muteBtn.textContent = pct === 0 ? 'Unmute' : 'Mute';
+      muteBtn.classList.toggle('active', pct === 0);
+    };
+
+    const applyVolume = (pct) => {
+      const v = Math.max(0, Math.min(1, pct / 100));
+      if (typeof AudioEngine !== 'undefined') AudioEngine.setMasterVolume(v);
+      syncUI();
+    };
+
+    const openModal = () => {
+      syncUI();
+      overlay.classList.remove('hidden');
+      overlay.setAttribute('aria-hidden', 'false');
+    };
+    const closeModal = () => {
+      overlay.classList.add('hidden');
+      overlay.setAttribute('aria-hidden', 'true');
+    };
+
+    gearBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    slider.addEventListener('input', () => applyVolume(Number(slider.value)));
+
+    muteBtn.addEventListener('click', () => {
+      const pct = Math.round(currentVolume() * 100);
+      if (pct === 0) {
+        applyVolume(volumeBeforeMute ?? 100);
+        volumeBeforeMute = null;
+      } else {
+        volumeBeforeMute = pct;
+        applyVolume(0);
+      }
+    });
+
+    // Apply the persisted volume once the audio graph exists.
+    if (typeof AudioEngine !== 'undefined') AudioEngine.setMasterVolume(currentVolume());
+  }
+
+  function initAudioUnlock() {
+    if (typeof AudioEngine === 'undefined') return;
+    let unlocked = false;
+    const unlock = () => {
+      if (unlocked) return;
+      unlocked = true;
+      AudioEngine.resume();
+      document.removeEventListener('pointerdown', unlock, true);
+      document.removeEventListener('touchstart', unlock, true);
+      document.removeEventListener('keydown', unlock, true);
+    };
+    // Mobile browsers (notably iOS Safari) only allow audio to start inside
+    // a direct user-gesture handler, so grab the very first tap/click/key
+    // anywhere on the page and use it to resume the AudioContext.
+    document.addEventListener('pointerdown', unlock, true);
+    document.addEventListener('touchstart', unlock, true);
+    document.addEventListener('keydown', unlock, true);
+  }
+
   function init() {
     window.Bandland = { exitToHub: exitGigToHub };
+    initSettingsUI();
+    initAudioUnlock();
     if (new URLSearchParams(window.location.search).get('test') === '1') {
       window.Bandland.endGig = (mode) => finishGigScreen(mode === 'booed' ? 'booed' : 'results');
     }

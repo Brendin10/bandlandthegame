@@ -6,6 +6,8 @@ const AudioEngine = (() => {
   let dryGain = null;
   let wetGain = null;
   let crowdBus = null;
+  let masterVolumeGain = null;
+  let masterVolumeValue = 1;
 
   const CHORD_ROOT = {
     C: 'C2', G: 'G1', Am: 'A1', F: 'F1', E: 'E2', B: 'B1',
@@ -50,6 +52,30 @@ const AudioEngine = (() => {
   };
 
   let activeSustain = null;
+
+  const VOLUME_KEY = 'bandland_audio_volume';
+
+  function loadStoredVolume() {
+    try {
+      const raw = localStorage.getItem(VOLUME_KEY);
+      if (raw === null) return 1;
+      const v = parseFloat(raw);
+      if (Number.isNaN(v)) return 1;
+      return Math.max(0, Math.min(1, v));
+    } catch {
+      return 1;
+    }
+  }
+
+  function storeVolume(v) {
+    try {
+      localStorage.setItem(VOLUME_KEY, String(v));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  masterVolumeValue = loadStoredVolume();
 
   function getCtx() {
     if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -97,12 +123,30 @@ const AudioEngine = (() => {
 
     crowdBus = ac.createGain();
     crowdBus.gain.value = 0.64;
-    crowdBus.connect(ac.destination);
 
-    dryGain.connect(ac.destination);
-    wetGain.connect(ac.destination);
+    masterVolumeGain = ac.createGain();
+    masterVolumeGain.gain.value = masterVolumeValue;
+    masterVolumeGain.connect(ac.destination);
+
+    crowdBus.connect(masterVolumeGain);
+    dryGain.connect(masterVolumeGain);
+    wetGain.connect(masterVolumeGain);
     mixReady = true;
     return musicBus;
+  }
+
+  function setMasterVolume(v) {
+    const clamped = Math.max(0, Math.min(1, v));
+    masterVolumeValue = clamped;
+    storeVolume(clamped);
+    if (masterVolumeGain) {
+      const ac = getCtx();
+      masterVolumeGain.gain.setTargetAtTime(clamped, ac.currentTime, 0.01);
+    }
+  }
+
+  function getMasterVolume() {
+    return masterVolumeValue;
   }
 
   function getMix() {
@@ -1680,6 +1724,7 @@ const AudioEngine = (() => {
 
   return {
     resume, getCtx, initMix, getMix, connectToMix,
+    setMasterVolume, getMasterVolume,
     playCrash, playCheer, playCheerLoud, playCoin, playMiss, playTick, playHitBurst,
     playInstrument, playPartEvent, playSongPad, startSustain, stopSustain,
     startCrowdAmbience, stopCrowdAmbience, endCrowdIntro, setCrowdBooing, setHotStreakCheering, boostCrowdCheer, playBoo, playCrowdSample, loadCheerSample, loadBooSample, loadRewindSample, playRewindSfx, stopRewindSfx,

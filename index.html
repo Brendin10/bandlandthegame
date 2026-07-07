@@ -32,6 +32,23 @@
     <main id="screen-root"></main>
   </div>
 
+  <button id="btn-settings-gear" class="settings-gear-btn" aria-label="Settings" title="Settings">⚙️</button>
+
+  <div id="settings-modal-overlay" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal settings-modal">
+      <h3>Settings</h3>
+      <div class="settings-row">
+        <label for="settings-volume-slider">🔊 Volume</label>
+        <input type="range" id="settings-volume-slider" min="0" max="100" step="1" value="100" />
+        <span id="settings-volume-value">100%</span>
+      </div>
+      <button type="button" id="settings-mute-btn" class="btn btn-secondary settings-mute-btn">Mute</button>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="settings-close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
   <div id="stage-curtain" class="stage-curtain curtain-idle" aria-hidden="true">
     <div class="curtain-panel curtain-left"></div>
     <div class="curtain-panel curtain-right"></div>

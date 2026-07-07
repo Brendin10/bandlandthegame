@@ -1843,6 +1843,68 @@ body {
   background: transparent;
 }
 
+/* Settings gear button */
+.settings-gear-btn {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: var(--bg-panel);
+  color: var(--text);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 150;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease;
+}
+
+.settings-gear-btn:hover {
+  transform: rotate(25deg) scale(1.06);
+}
+
+.settings-gear-btn:active {
+  transform: rotate(45deg) scale(0.96);
+}
+
+.settings-modal .settings-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.settings-modal .settings-row label {
+  flex: 0 0 auto;
+  font-size: 1rem;
+}
+
+.settings-modal input[type="range"] {
+  flex: 1 1 auto;
+  accent-color: var(--brand-lime);
+  height: 6px;
+}
+
+.settings-modal #settings-volume-value {
+  flex: 0 0 44px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.settings-mute-btn {
+  width: 100%;
+}
+
+.settings-mute-btn.active {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;
