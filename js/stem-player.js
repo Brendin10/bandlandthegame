@@ -11,7 +11,7 @@ const StemPlayer = (() => {
   let playerStemVolume = 1.15;
   let fullMixGain = null;
   let playerStemGain = null;
-  let tracksGain = null;
+  let backingGain = null;
   let stemBus = null;
   let sustainSource = null;
   let sustainGain = null;
@@ -71,12 +71,21 @@ const StemPlayer = (() => {
       playerStemGain = ac.createGain();
       playerStemGain.connect(stemBus);
     }
-    if (!tracksGain) {
-      tracksGain = ac.createGain();
-      tracksGain.gain.value = 1;
-      tracksGain.connect(stemBus);
+    if (!backingGain) {
+      backingGain = ac.createGain();
+      backingGain.connect(stemBus);
     }
-    fullMixGain.gain.value = fullMixVolume;
+    // The mastered "Full" mix already bakes in the player's own instrument.
+    // Playing it audibly alongside the player's hit-triggered slices causes a
+    // flam/double-hit, which is exactly what breaks the "you are playing it"
+    // feel. So Full stays silent during a gig - it's kept running purely as
+    // a timing/completion clock (see startStemSource + setOnFullMixEnd).
+    fullMixGain.gain.value = 0;
+    // The backing bus carries every stem except the one the player controls,
+    // so the band keeps grooving while the player's instrument is heard only
+    // when they actually hit/hold a gem. Reuses the song's fullMixVolume
+    // tuning knob since it's now the main audible bus during a gig.
+    backingGain.gain.value = fullMixVolume;
     playerStemGain.gain.value = playerStemVolume;
     return stemBus;
   }
@@ -97,15 +106,19 @@ const StemPlayer = (() => {
     return Math.min(noteDur, 1.25);
   }
 
-  function duckFullMixForHit() {
-    if (!fullMixGain) return;
+  function duckBackingForHit() {
+    if (!backingGain) return;
     const ac = getCtx();
     const now = ac.currentTime;
-    const g = fullMixGain.gain;
+    const g = backingGain.gain;
+    const base = fullMixVolume;
     g.cancelScheduledValues(now);
     g.setValueAtTime(g.value, now);
-    g.linearRampToValueAtTime(fullMixVolume * HIT_DUCK_MIX, now + 0.03);
-    g.linearRampToValueAtTime(fullMixVolume, now + HIT_DUCK_SEC);
+    // Quick sidechain-style pump: the backing band dips as the player's own
+    // hit lands, so their note reads as the loudest, most present sound in
+    // that instant - like the band is genuinely making room for them to play.
+    g.linearRampToValueAtTime(base * HIT_DUCK_MIX, now + 0.03);
+    g.linearRampToValueAtTime(base, now + HIT_DUCK_SEC);
   }
 
   function playHit(stemKey, note, songObj, bpm, volScale = 1) {
@@ -130,7 +143,7 @@ const StemPlayer = (() => {
     src.connect(gain);
     gain.connect(playerStemGain);
     src.start(now, offset, duration);
-    duckFullMixForHit();
+    duckBackingForHit();
     return true;
   }
 
@@ -189,6 +202,8 @@ const StemPlayer = (() => {
     src.connect(gain);
 
     if (key === 'Full') {
+      // Silent by design (see ensureBus) - only used as the timing/completion
+      // clock so gig duration + end-of-song detection stay unchanged.
       gain.gain.value = 1;
       gain.connect(fullMixGain);
       src.onended = () => {
@@ -202,8 +217,10 @@ const StemPlayer = (() => {
         onFullMixEnd?.();
       };
     } else {
-      gain.gain.value = 0;
-      gain.connect(tracksGain);
+      // Backing stem: every part except the one the player controls, playing
+      // continuously so the rest of the band keeps going.
+      gain.gain.value = 1;
+      gain.connect(backingGain);
     }
 
     const safeOffset = Math.min(Math.max(offset, 0), buf.duration);
@@ -228,6 +245,10 @@ const StemPlayer = (() => {
 
     const offset = Math.min(Math.max(audioOffset, 0), buffers.Full.duration);
     startStemSource(ac, 'Full', offset, startCtxTime);
+    TRACK_STEMS.forEach((key) => {
+      if (key === playerStemKey) return;
+      startStemSource(ac, key, offset, startCtxTime);
+    });
 
     return true;
   }

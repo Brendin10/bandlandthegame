@@ -2182,7 +2182,7 @@ const Game = (() => {
     }
   }
 
-  function triggerPlayAnimation(inst, rating) {
+  function triggerPlayAnimation(inst, rating, note = null) {
     const performer = document.getElementById('performer');
     if (!performer) return;
     const anim = INST_ANIM[inst.id] || SUBTYPE_ANIM[inst.subtype] || 'anim-hit';
@@ -2208,8 +2208,11 @@ const Game = (() => {
         held.classList.add(instAnim);
         if (inst.id === 'drums' && typeof InstrumentArt !== 'undefined' && !InstrumentArt.hasArt(inst)) {
           const mount = performer.querySelector('.held-mount');
-          const hitType = rating === 'perfect' ? 'cymbal' : 'snare';
+          // Flash the drum piece that actually sounds for this note, so the
+          // visual matches the kick/snare audio instead of just the rating.
+          const hitType = note?.hit === 'kick' ? 'kick' : 'snare';
           InstrumentArt.triggerDrumHit(mount || held, hitType);
+          if (rating === 'perfect') InstrumentArt.triggerDrumHit(mount || held, 'cymbal');
         }
       }
     }
@@ -2372,7 +2375,7 @@ const Game = (() => {
     if (!p || p.gigCompleting || p.gigFinished || p.booed || state.gigResultsShown) return;
     if (rating === 'miss' && !isRhythmScoringEnabled()) return;
 
-    triggerPlayAnimation(inst, rating);
+    triggerPlayAnimation(inst, rating, note);
 
     if (rating === 'miss') {
       RhythmLane.flashHit(rating, false);
@@ -2520,7 +2523,7 @@ const Game = (() => {
       startInstrumentSustain(inst, note);
       const zone = document.getElementById('hit-zone');
       if (zone) zone.classList.add('holding');
-      triggerPlayAnimation(inst, rating);
+      triggerPlayAnimation(inst, rating, note);
       setRhythmHint('hold through the gem!', 'good');
       return;
     }

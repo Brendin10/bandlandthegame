@@ -204,7 +204,7 @@ const InstrumentArt = (() => {
   function renderDrumKit(anim) {
     const inner = `
       ${layer('inst-shadow', `<ellipse cx="100" cy="178" rx="90" ry="12" fill="rgba(0,0,0,0.2)"/>`)}
-      ${layer('inst-kick', `<ellipse cx="100" cy="178" rx="28" ry="18" fill="#5a3018" stroke="${O}" stroke-width="2.5"/><ellipse cx="100" cy="174" rx="24" ry="14" fill="#8B4513"/><circle cx="100" cy="174" r="8" fill="#c8c8c8" stroke="${O}" stroke-width="1.5"/>`)}
+      ${layer('inst-kick', `<ellipse class="drum-piece drum-kick" cx="100" cy="178" rx="28" ry="18" fill="#5a3018" stroke="${O}" stroke-width="2.5"/><ellipse cx="100" cy="174" rx="24" ry="14" fill="#8B4513"/><circle cx="100" cy="174" r="8" fill="#c8c8c8" stroke="${O}" stroke-width="1.5"/>`)}
       ${layer('inst-snare', `<ellipse class="drum-piece drum-snare" cx="62" cy="172" rx="18" ry="12" fill="#8B4513" stroke="${O}" stroke-width="2"/><ellipse cx="62" cy="168" rx="16" ry="10" fill="#e8e8e8"/>`)}
       ${layer('inst-hihat', `<ellipse cx="138" cy="158" rx="14" ry="10" fill="#bbb" stroke="${O}" stroke-width="2"/><ellipse cx="138" cy="156" rx="12" ry="8" fill="#ddd"/><line x1="138" y1="156" x2="138" y2="178" stroke="#666" stroke-width="3"/>`)}
       ${layer('inst-cymbal', `<ellipse class="drum-piece drum-cymbal" cx="100" cy="148" rx="20" ry="14" fill="#c8c8c8" stroke="${O}" stroke-width="2"/><ellipse cx="100" cy="146" rx="18" ry="12" fill="#e0e0e0"/>`)}
