@@ -769,7 +769,8 @@ function initVenueParallax(root = document) {
   const layers = backdrop.querySelectorAll('.backdrop-layer');
   if (!layers.length) return () => {};
 
-  const depth = [0.25, 0.5, 0.75, 1, 1.15];
+  // Stronger separation between planes so the parallax reads as real depth.
+  const depth = [0.18, 0.45, 0.8, 1.15, 1.45];
   let raf = null;
   let targetX = 0;
   let targetY = 0;

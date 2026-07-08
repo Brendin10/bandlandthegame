@@ -245,24 +245,77 @@ function renderCharacter(id, size, opts = {}) {
   return layeredCharacter('lizzy', size, LIZZY_LAYERS(playPose, opts.instrument), frontArms, instInner, wearHtml, backArms);
 }
 
-function renderCrowdMember(index) {
-  const colors = ['#FF6B9D', '#6BCBFF', '#FFD166', '#95E06C', '#C77DFF'];
-  const c = colors[index % colors.length];
-  const light = c;
+/* Crowd members are drawn as individual fans watching the show: eyes and
+ * heads angled toward the performer (opts.look leans them toward stage
+ * center), arms up, phones out. Deterministic variety comes from the index
+ * so the same fan keeps their look for the whole gig. */
+function renderCrowdMember(index, opts = {}) {
+  const look = Math.max(-1, Math.min(1, opts.look ?? 0));
+  const shirtColors = ['#FF6B9D', '#6BCBFF', '#FFD166', '#95E06C', '#C77DFF', '#FF9E5E'];
+  const hairColors = ['#2b1b12', '#5a3620', '#c9552e', '#e8c56a', '#3c2a52', '#1e3a5c'];
+  const skinTones = ['#ffd9b3', '#f0b98a', '#c98a5e', '#a5673f'];
+  const shirt = shirtColors[index % shirtColors.length];
+  const hairC = hairColors[(index * 5 + 2) % hairColors.length];
+  const skin = skinTones[(index * 3 + 1) % skinTones.length];
+  const hairKind = (index * 7 + 3) % 5;
+  const pose = (index * 11 + 1) % 3;
+  const tilt = (look * 7).toFixed(1);
+  const px = (look * 1.9).toFixed(1); // pupils drift toward the performer
+  const py = 1.6; // ...and down toward the stage
+
+  const O = '#1C1230';
+
+  const hair = [
+    // spiky
+    `<polygon points="14,10 17,1 20,9" fill="${hairC}" stroke="${O}" stroke-width="1.5"/>
+     <polygon points="20,8 24,-1 28,8" fill="${hairC}" stroke="${O}" stroke-width="1.5"/>
+     <polygon points="28,9 31,1 34,10" fill="${hairC}" stroke="${O}" stroke-width="1.5"/>`,
+    // bob
+    `<path d="M11 22 Q9 6 24 6 Q39 6 37 22 L33 14 Q24 9 15 14 Z" fill="${hairC}" stroke="${O}" stroke-width="1.5"/>`,
+    // mohawk
+    `<polygon points="21,8 24,-4 27,8" fill="#39FF14" stroke="${O}" stroke-width="1.5"/>
+     <polygon points="17,10 19,2 22,9" fill="#39FF14" stroke="${O}" stroke-width="1.5"/>
+     <polygon points="26,9 29,2 31,10" fill="#39FF14" stroke="${O}" stroke-width="1.5"/>`,
+    // beanie
+    `<path d="M12 16 Q12 5 24 5 Q36 5 36 16 L36 19 Q24 15 12 19 Z" fill="${shirt}" stroke="${O}" stroke-width="1.5"/>
+     <circle cx="24" cy="4" r="3" fill="#fff" stroke="${O}" stroke-width="1.2"/>`,
+    // curls
+    `<circle cx="15" cy="12" r="5" fill="${hairC}" stroke="${O}" stroke-width="1.5"/>
+     <circle cx="24" cy="8" r="6" fill="${hairC}" stroke="${O}" stroke-width="1.5"/>
+     <circle cx="33" cy="12" r="5" fill="${hairC}" stroke="${O}" stroke-width="1.5"/>`,
+  ][hairKind];
+
+  const arms = [
+    // both arms up, rocking out
+    `<path d="M12 36 Q4 28 6 16" fill="none" stroke="${skin}" stroke-width="4.5" stroke-linecap="round"/>
+     <path d="M36 36 Q44 28 42 16" fill="none" stroke="${skin}" stroke-width="4.5" stroke-linecap="round"/>
+     <circle cx="6" cy="14" r="3.2" fill="${skin}" stroke="${O}" stroke-width="1.2"/>
+     <circle cx="42" cy="14" r="3.2" fill="${skin}" stroke="${O}" stroke-width="1.2"/>`,
+    // one fist pumping
+    `<path d="M36 36 Q45 26 43 13" fill="none" stroke="${skin}" stroke-width="4.5" stroke-linecap="round"/>
+     <circle cx="43" cy="11" r="3.6" fill="${skin}" stroke="${O}" stroke-width="1.4"/>
+     <path d="M12 38 Q8 44 10 50" fill="none" stroke="${skin}" stroke-width="4.5" stroke-linecap="round"/>`,
+    // phone held high, screen glowing
+    `<path d="M10 36 Q3 26 6 14" fill="none" stroke="${skin}" stroke-width="4.5" stroke-linecap="round"/>
+     <rect x="1" y="3" width="9" height="14" rx="2" fill="#14141c" stroke="${O}" stroke-width="1.4"/>
+     <rect x="2.5" y="5" width="6" height="10" rx="1" fill="#9be8ff" opacity="0.95"/>
+     <path d="M38 38 Q42 44 40 50" fill="none" stroke="${skin}" stroke-width="4.5" stroke-linecap="round"/>`,
+  ][pose];
+
   return `
-    <svg viewBox="0 0 40 50" width="32" height="40" class="crowd-member">
-      <ellipse cx="20" cy="38" rx="14" ry="8" fill="#3C3250" stroke="#1C1230" stroke-width="2"/>
-      <ellipse cx="20" cy="16" rx="13" ry="14" fill="${c}" stroke="#1C1230" stroke-width="2"/>
-      <ellipse cx="20" cy="14" rx="11" ry="11" fill="${light}" opacity="0.85"/>
-      <circle cx="12" cy="8" r="3" fill="${c}" stroke="#1C1230" stroke-width="1"/>
-      <circle cx="28" cy="8" r="3" fill="${c}" stroke="#1C1230" stroke-width="1"/>
-      <circle cx="20" cy="4" r="3" fill="${c}" stroke="#1C1230" stroke-width="1"/>
-      <rect x="10" y="18" width="20" height="18" rx="5" fill="${c}" stroke="#1C1230" stroke-width="2"/>
-      <ellipse cx="15" cy="14" rx="3" ry="3.5" fill="white" stroke="#1C1230" stroke-width="1"/>
-      <ellipse cx="25" cy="14" rx="3" ry="3.5" fill="white" stroke="#1C1230" stroke-width="1"/>
-      <circle cx="15" cy="14" r="1.5" fill="#2D1B69"/>
-      <circle cx="25" cy="14" r="1.5" fill="#2D1B69"/>
-      <path d="M14 19 Q20 23 26 19" fill="none" stroke="#1C1230" stroke-width="1.5" stroke-linecap="round"/>
+    <svg viewBox="0 0 48 60" width="38" height="48" class="crowd-member">
+      ${arms}
+      <path d="M13 38 Q13 32 24 32 Q35 32 35 38 L35 54 Q24 58 13 54 Z" fill="${shirt}" stroke="${O}" stroke-width="2"/>
+      <path d="M17 36 Q24 40 31 36" fill="none" stroke="${O}" stroke-width="1.2" opacity="0.35"/>
+      <g transform="rotate(${tilt} 24 20)">
+        <circle cx="24" cy="19" r="11.5" fill="${skin}" stroke="${O}" stroke-width="2"/>
+        ${hair}
+        <ellipse cx="${19 + +px}" cy="${19 + py}" rx="2.9" ry="3.3" fill="#fff" stroke="${O}" stroke-width="1"/>
+        <ellipse cx="${29 + +px}" cy="${19 + py}" rx="2.9" ry="3.3" fill="#fff" stroke="${O}" stroke-width="1"/>
+        <circle cx="${19 + +px * 1.4}" cy="${20.4 + py}" r="1.5" fill="#2D1B69"/>
+        <circle cx="${29 + +px * 1.4}" cy="${20.4 + py}" r="1.5" fill="#2D1B69"/>
+        <ellipse cx="${24 + +px}" cy="${27 + py * 0.4}" rx="2.6" ry="3.2" fill="#7a2d3e" stroke="${O}" stroke-width="1.2"/>
+      </g>
     </svg>
   `;
 }

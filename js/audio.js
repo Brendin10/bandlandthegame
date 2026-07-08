@@ -1098,9 +1098,9 @@ const AudioEngine = (() => {
 
   function playCheerLoud() {
     const tier = crowdAmbience?.tier ?? 8;
-    playCrowdSample(tier, 0.48, { loud: true, hotStreak: true });
-    setTimeout(() => playCrowdSample(tier, 0.4, { loud: true, hotStreak: true }), 140);
-    setTimeout(() => playCrowdSample(tier, 0.34, { loud: true, hotStreak: true }), 300);
+    playCrowdSample(tier, 0.4, { loud: true, hotStreak: true });
+    setTimeout(() => playCrowdSample(tier, 0.32, { loud: true, hotStreak: true }), 140);
+    setTimeout(() => playCrowdSample(tier, 0.26, { loud: true, hotStreak: true }), 300);
   }
 
   function playCoin() {
@@ -1265,8 +1265,8 @@ const AudioEngine = (() => {
   const CHEER_URLS = ['audio/storegraphic-crowd-cheers-314919.mp3'];
   const BOO_URLS = ['audio/dragon-studio-crowd-booing-494319.mp3'];
   const REWIND_URLS = ['audio/deandre_aaron-dj-turntable-rewind-429858.mp3'];
-  const HOT_STREAK_CHEER_VOL = 0.42;
-  const HOT_STREAK_CHEER_VOL_RANGE = 0.1;
+  const HOT_STREAK_CHEER_VOL = 0.32;
+  const HOT_STREAK_CHEER_VOL_RANGE = 0.08;
   let cheerBuffer = null;
   let cheerLoadPromise = null;
   let booBuffer = null;
@@ -1763,6 +1763,16 @@ const AudioEngine = (() => {
     setTimeout(() => { if (crowdAmbience) crowdAmbience.cheerMult = 1; }, 2500);
   }
 
+  // Played once when the player makes it all the way through a song: a
+  // cheer swell that celebrates without burying the results screen audio.
+  function playVictoryCheer(tier = 0) {
+    initMix();
+    playCrowdSample(tier, 0.55, { loud: true });
+    setTimeout(() => playCrowdSample(tier, 0.46, { loud: true }), 180);
+    setTimeout(() => playCrowdSample(tier, 0.36, { loud: true }), 430);
+    setTimeout(() => playCrowdSample(tier, 0.26, { loud: true }), 950);
+  }
+
   function playMiss() {
     const ac = getCtx();
     const now = ac.currentTime;
@@ -1795,7 +1805,7 @@ const AudioEngine = (() => {
   return {
     resume, getCtx, initMix, getMix, connectToMix,
     setMasterVolume, getMasterVolume, unlockIOSAudioSession,
-    playCrash, playCheer, playCheerLoud, playCoin, playMiss, playTick, playUIClick, playHitBurst,
+    playCrash, playCheer, playCheerLoud, playVictoryCheer, playCoin, playMiss, playTick, playUIClick, playHitBurst,
     playInstrument, playPartEvent, playSongPad, startSustain, stopSustain,
     startCrowdAmbience, stopCrowdAmbience, endCrowdIntro, setCrowdBooing, setHotStreakCheering, boostCrowdCheer, playBoo, playCrowdSample, loadCheerSample, loadBooSample, loadRewindSample, playRewindSfx, stopRewindSfx,
     playLiveBass, playLiveShimmer, playLiveStrum, playDanceBeat, playDrumStyleBeat, playFourOnFloorKick,

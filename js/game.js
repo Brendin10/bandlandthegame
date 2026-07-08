@@ -595,6 +595,12 @@ const Game = (() => {
       return false;
     }
 
+    if (mode === 'results') {
+      // The crowd sends you off: a cheer swell for making it through the song.
+      const cheerTier = p?.venueTier ?? state.pendingGigResults?.venueTier ?? 0;
+      AudioEngine.playVictoryCheer?.(cheerTier);
+    }
+
     const html = mode === 'booed' ? renderBooedMarkup() : renderResultsMarkup();
     openGigResultsOverlay(html);
     state.gigResultsShown = true;
@@ -1206,6 +1212,68 @@ const Game = (() => {
     `;
   }
 
+  /* ---- Crowd pit: three depth rows of fans facing the performer ---- */
+  const CROWD_ROW_CAPS = { front: 7, mid: 7, back: 6 };
+
+  function renderCrowdTier(n, rowName, seedOffset) {
+    return Array.from({ length: n }, (_, i) => {
+      // Fans at the edges angle in toward the performer at stage center.
+      const t = n === 1 ? 0 : i / (n - 1) - 0.5;
+      const look = -t * 2;
+      const seed = i + seedOffset;
+      return `<div class="crowd-person" style="--delay:${(seed % 9) * 0.07}s">${renderCrowdMember(seed, { look, row: rowName })}</div>`;
+    }).join('');
+  }
+
+  function renderCrowdPitInner(count) {
+    const front = Math.min(count, CROWD_ROW_CAPS.front);
+    const mid = Math.min(Math.max(count - CROWD_ROW_CAPS.front, 0), CROWD_ROW_CAPS.mid);
+    const back = Math.min(Math.max(count - CROWD_ROW_CAPS.front - CROWD_ROW_CAPS.mid, 0), CROWD_ROW_CAPS.back);
+    return `
+      <div class="crowd-tier tier-back">${renderCrowdTier(back, 'back', 14)}</div>
+      <div class="crowd-tier tier-mid">${renderCrowdTier(mid, 'mid', 7)}</div>
+      <div class="crowd-tier tier-front">${renderCrowdTier(front, 'front', 0)}</div>`;
+  }
+
+  function updateCrowdDisplay() {
+    const p = state.performance;
+    const el = document.getElementById('crowd-row');
+    if (!p || !el) return;
+    const count = Math.min(Math.floor(p.crowd), 20);
+    if (Number(el.dataset.count) === count) return;
+    el.dataset.count = count;
+    el.innerHTML = renderCrowdPitInner(count);
+  }
+
+  /* ---- Hot-streak flame aura: layered SVG fire + rising embers ---- */
+  const FLAME_AURA_HTML = `
+    <svg viewBox="0 0 100 120" class="flame-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path class="fl fl-back" fill="#ff5a00" opacity="0.8" d="M50 118 C22 100 12 74 26 48 C29 64 38 68 36 50 C45 61 53 55 46 32 C61 47 67 33 58 14 C81 35 91 74 74 98 C67 110 60 116 50 118 Z"/>
+      <path class="fl fl-mid" fill="#ff9d1a" opacity="0.92" d="M50 116 C32 103 25 82 34 60 C38 73 46 75 44 59 C52 69 59 61 54 42 C67 57 73 77 66 95 C62 106 56 112 50 116 Z"/>
+      <path class="fl fl-core" fill="#ffe066" d="M50 112 C40 103 37 90 43 74 C46 83 52 85 50 72 C58 83 62 93 58 101 C56 107 53 110 50 112 Z"/>
+    </svg>
+    <span class="ember e1"></span><span class="ember e2"></span><span class="ember e3"></span><span class="ember e4"></span>`;
+
+  function syncFlameAuras(on) {
+    const slots = [
+      document.getElementById('performer'),
+      ...document.querySelectorAll('.lineup-slot.side'),
+    ].filter(Boolean);
+    for (const el of slots) {
+      const existing = el.querySelector(':scope > .flame-aura');
+      if (on && !existing) {
+        const div = document.createElement('div');
+        div.className = 'flame-aura';
+        div.setAttribute('aria-hidden', 'true');
+        div.innerHTML = FLAME_AURA_HTML;
+        el.prepend(div);
+      } else if (!on && existing && !existing.classList.contains('flame-out')) {
+        existing.classList.add('flame-out');
+        setTimeout(() => existing.remove(), 400);
+      }
+    }
+  }
+
   function renderStageLineup(inst) {
     const gigBand = getGigBandMembers();
     const left = gigBand.filter((_, i) => i % 2 === 0);
@@ -1235,9 +1303,7 @@ const Game = (() => {
     const cheerPct = Math.min(100, (p.cheer / p.cheerGoal) * 100);
     const crowdPct = Math.min(100, (p.crowd / p.crowdCap) * 100);
 
-    const crowdHtml = Array.from({ length: Math.min(p.crowd, 20) }, (_, i) =>
-      `<div class="crowd-person" style="--delay:${i * 0.05}s">${renderCrowdMember(i)}</div>`
-    ).join('');
+    const crowdCount = Math.min(Math.floor(p.crowd), 20);
 
     return `
       <section class="screen perform-screen ${venue.bg} stage-mounting">
@@ -1249,7 +1315,7 @@ const Game = (() => {
         </div>
 
         <div class="perform-stage">
-          <div class="crowd-row" id="crowd-row">${crowdHtml}</div>
+          <div class="crowd-row crowd-pit" id="crowd-row" data-count="${crowdCount}">${renderCrowdPitInner(crowdCount)}</div>
           ${typeof renderStageLighting === 'function' ? renderStageLighting(venue.tier ?? 0) : '<div class="stage-lights"></div>'}
           <div class="performer-wrap ${p.onFire ? 'band-on-fire' : ''}">
             ${renderStageLineup(inst)}
@@ -1748,6 +1814,8 @@ const Game = (() => {
     document.getElementById('rhythm-highway')?.classList.toggle('on-fire', on);
     document.querySelector('.play-controls')?.classList.toggle('on-fire', on);
     document.getElementById('btn-play-note')?.classList.toggle('on-fire', on);
+    document.getElementById('crowd-row')?.classList.toggle('crowd-hyped', on);
+    syncFlameAuras(on);
     AudioEngine.setHotStreakCheering?.(on);
   }
 
@@ -2573,15 +2641,7 @@ const Game = (() => {
     updatePerformanceUI();
     persist();
 
-    const crowdRow = document.getElementById('crowd-row');
-    if (crowdRow) {
-      const count = Math.min(Math.floor(p.crowd), 20);
-      if (crowdRow.children.length !== count) {
-        crowdRow.innerHTML = Array.from({ length: count }, (_, i) =>
-          `<div class="crowd-person" style="--delay:${i * 0.05}s">${renderCrowdMember(i)}</div>`
-        ).join('');
-      }
-    }
+    updateCrowdDisplay();
   }
 
   function onNotePress() {
