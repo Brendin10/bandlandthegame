@@ -8,6 +8,17 @@ const InstrumentGrips = (() => {
   };
 
   const HOLD_DEFAULTS = {
+    guitar: {
+      // Slung low across the torso: mount anchors the strings under the
+      // RIGHT (strum) hand, neck runs up-left through the fret hand.
+      gripL: { x: 48, y: 163 },
+      gripR: { x: 135, y: 183 },
+      art: { w: 150, h: 136, anchorX: 0.34, anchorY: 0.545 },
+      rot: -25,
+      depth: 'sandwich',
+      mountAt: 'R',
+      rest: { L: { forearm: -34, hand: -20 }, R: { forearm: 10, hand: 4 } },
+    },
     strum: {
       gripL: { x: 52, y: 172 },
       gripR: { x: 132, y: 158 },
@@ -53,12 +64,16 @@ const InstrumentGrips = (() => {
       hideSticks: true,
     },
     bass: {
-      art: { w: 114, h: 136, anchorX: 0.36, anchorY: 0.76 },
-      rot: -16,
+      // Vertical source art, rotated down into the slung position.
+      art: { w: 60, h: 167, anchorX: 0.45, anchorY: 0.775 },
+      rot: -68,
     },
     'electric-guitar': {
-      art: { w: 118, h: 152, anchorX: 0.36, anchorY: 0.76 },
-      rot: -18,
+      // Source art has the neck pointing up-right; flip it so the neck
+      // crosses the body up-left like a right-handed player.
+      art: { w: 150, h: 136, anchorX: 0.34, anchorY: 0.545 },
+      rot: -25,
+      flip: true,
     },
     keys: {
       art: { w: 158, h: 92, anchorX: 0.5, anchorY: 0.68 },
@@ -79,6 +94,9 @@ const InstrumentGrips = (() => {
       rot: over.rot ?? base.rot,
       depth: over.depth || base.depth,
       hideSticks: over.hideSticks ?? base.hideSticks ?? false,
+      mountAt: over.mountAt || base.mountAt || 'L',
+      flip: over.flip ?? base.flip ?? false,
+      rest: over.rest || base.rest || null,
     };
   }
 
@@ -87,13 +105,15 @@ const InstrumentGrips = (() => {
   }
 
   function mountTransform(grip) {
-    const { gripL, art, rot } = grip;
+    const { art, rot } = grip;
+    const p = grip.mountAt === 'R' ? grip.gripR : grip.gripL;
     const w = art.w;
     const h = art.h;
     const ax = art.anchorX * w;
     const ay = art.anchorY * h;
+    const flip = grip.flip ? ' scale(-1,1)' : '';
     return {
-      transform: `translate(${gripL.x},${gripL.y}) rotate(${rot}) translate(${-ax},${-ay})`,
+      transform: `translate(${p.x},${p.y}) rotate(${rot})${flip} translate(${-ax},${-ay})`,
       w,
       h,
     };

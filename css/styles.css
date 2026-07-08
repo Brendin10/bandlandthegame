@@ -3084,143 +3084,237 @@ body {
   transition: transform 0.08s ease-out;
 }
 
-.rig-pose-strum .rig-arm-R.rig-hit .rig-forearm-pose {
+.rig-arm-R.rig-pose-strum.rig-hit .rig-forearm-pose {
   animation: rigStrumR 0.28s ease;
 }
 
-.rig-pose-strum .rig-arm-L.rig-hit-alt .rig-forearm-pose {
+.rig-arm-L.rig-pose-strum.rig-hit-alt .rig-forearm-pose {
   animation: rigStrumL 0.28s ease;
 }
 
-.rig-pose-drums .rig-arm-L.rig-hit .rig-forearm-pose,
-.rig-pose-drums .rig-arm-L.rig-hit .rig-stick {
+.rig-arm-L.rig-pose-drums.rig-hit .rig-forearm-pose,
+.rig-arm-L.rig-pose-drums.rig-hit .rig-stick {
   animation: rigDrumHitL 0.22s ease;
 }
 
-.rig-pose-drums .rig-arm-R.rig-hit-alt .rig-forearm-pose,
-.rig-pose-drums .rig-arm-R.rig-hit-alt .rig-stick {
+.rig-arm-R.rig-pose-drums.rig-hit-alt .rig-forearm-pose,
+.rig-arm-R.rig-pose-drums.rig-hit-alt .rig-stick {
   animation: rigDrumHitR 0.22s ease;
 }
 
-.rig-pose-keys .rig-arm-L.rig-hit .rig-hand-pose,
-.rig-pose-keys .rig-arm-R.rig-hit-alt .rig-hand-pose {
+.rig-arm-L.rig-pose-keys.rig-hit .rig-hand-pose,
+.rig-arm-R.rig-pose-keys.rig-hit-alt .rig-hand-pose {
   animation: rigKeyPress 0.2s ease;
 }
 
-.rig-pose-brass .rig-arm-R.rig-hit-alt .rig-hand-pose {
+.rig-arm-R.rig-pose-brass.rig-hit-alt .rig-hand-pose {
   animation: rigBrassToot 0.24s ease;
 }
 
 /* Resting arm poses — grip-aligned via --rig-rest-* set by CharacterRig */
-.rig-pose-strum .rig-arm-L .rig-forearm-pose {
+.rig-arm-L.rig-pose-strum .rig-forearm-pose {
   transform: rotate(var(--rig-rest-forearm, 38deg));
 }
 
-.rig-pose-strum .rig-arm-R .rig-forearm-pose {
+.rig-arm-R.rig-pose-strum .rig-forearm-pose {
   transform: rotate(var(--rig-rest-forearm, 44deg));
 }
 
-.rig-pose-strum .rig-arm-L .rig-hand-pose {
+.rig-arm-L.rig-pose-strum .rig-hand-pose {
   transform: rotate(var(--rig-rest-hand, 8deg));
 }
 
-.rig-pose-strum .rig-arm-R .rig-hand-pose {
+.rig-arm-R.rig-pose-strum .rig-hand-pose {
   transform: rotate(var(--rig-rest-hand, 6deg));
 }
 
-.rig-pose-keys .rig-arm-L .rig-forearm-pose {
+.rig-arm-L.rig-pose-keys .rig-forearm-pose {
   transform: rotate(var(--rig-rest-forearm, 26deg));
 }
 
-.rig-pose-keys .rig-arm-R .rig-forearm-pose {
+.rig-arm-R.rig-pose-keys .rig-forearm-pose {
   transform: rotate(var(--rig-rest-forearm, 26deg));
 }
 
-.rig-pose-keys .rig-arm-L .rig-hand-pose,
-.rig-pose-keys .rig-arm-R .rig-hand-pose {
+.rig-arm-L.rig-pose-keys .rig-hand-pose,
+.rig-arm-R.rig-pose-keys .rig-hand-pose {
   transform: rotate(var(--rig-rest-hand, 0deg));
 }
 
-.rig-pose-drums .rig-arm-L .rig-forearm-pose {
+.rig-arm-L.rig-pose-drums .rig-forearm-pose {
   transform: rotate(var(--rig-rest-forearm, 20deg));
 }
 
-.rig-pose-drums .rig-arm-R .rig-forearm-pose {
+.rig-arm-R.rig-pose-drums .rig-forearm-pose {
   transform: rotate(var(--rig-rest-forearm, 20deg));
 }
 
-.rig-pose-brass .rig-arm-L .rig-forearm-pose {
+.rig-arm-L.rig-pose-brass .rig-forearm-pose {
   transform: rotate(var(--rig-rest-forearm, 8deg));
 }
 
-.rig-pose-brass .rig-arm-R .rig-forearm-pose {
+.rig-arm-R.rig-pose-brass .rig-forearm-pose {
   transform: rotate(var(--rig-rest-forearm, 52deg));
 }
 
-.rig-pose-brass .rig-arm-R .rig-hand-pose {
+.rig-arm-R.rig-pose-brass .rig-hand-pose {
   transform: rotate(var(--rig-rest-hand, 18deg));
 }
 
+/* Guitar & bass: slung hold. Rest angles pin the fret hand to the neck and
+ * hover the pick hand over the strings. */
+.rig-arm-L.rig-pose-guitar .rig-forearm-pose {
+  transform: rotate(var(--rig-rest-forearm, -34deg));
+}
+
+.rig-arm-R.rig-pose-guitar .rig-forearm-pose {
+  transform: rotate(var(--rig-rest-forearm, 10deg));
+}
+
+.rig-arm-L.rig-pose-guitar .rig-hand-pose {
+  transform: rotate(var(--rig-rest-hand, -20deg));
+}
+
+.rig-arm-R.rig-pose-guitar .rig-hand-pose {
+  transform: rotate(var(--rig-rest-hand, 4deg));
+}
+
+/* The strum: wrist winds up, sweeps DOWN across the strings, settles back.
+ * Elbow follows with a smaller arc; fret hand does a quick finger shift. */
+.rig-arm-R.rig-pose-guitar.rig-hit .rig-hand-pose {
+  animation: rigGtrStrum 0.26s cubic-bezier(0.3, 0.1, 0.3, 1);
+}
+
+.rig-arm-R.rig-pose-guitar.rig-hit .rig-forearm-pose {
+  animation: rigGtrElbow 0.26s ease;
+}
+
+.rig-arm-L.rig-pose-guitar.rig-hit-alt .rig-hand-pose {
+  animation: rigGtrFret 0.2s ease;
+}
+
+.rig-arm-R.rig-pose-guitar.rig-press .rig-hand-pose {
+  animation: rigGtrStrum 0.22s cubic-bezier(0.3, 0.1, 0.3, 1);
+}
+
+.rig-arm-R.rig-pose-guitar.rig-press .rig-forearm-pose {
+  animation: rigGtrElbow 0.22s ease;
+}
+
+.rig-arm-L.rig-pose-guitar.rig-press-alt .rig-hand-pose {
+  animation: rigGtrFret 0.18s ease;
+}
+
+/* Held note: keep gently raking the strings, fret hand vibrato */
+.rig-playing .rig-arm-R.rig-pose-guitar.rig-press .rig-hand-pose,
+.rig-playing .rig-arm-R.rig-pose-guitar.rig-press .rig-hand-pose {
+  animation: rigGtrSustain 0.5s ease-in-out infinite alternate;
+}
+
+.rig-playing .rig-arm-L.rig-pose-guitar.rig-press-alt .rig-hand-pose {
+  animation: rigGtrVibrato 0.24s ease-in-out infinite alternate;
+}
+
+@keyframes rigGtrStrum {
+  0% { transform: rotate(calc(var(--rig-rest-hand, 4deg) - 24deg)) translate(1px, -6px); }
+  55% { transform: rotate(calc(var(--rig-rest-hand, 4deg) + 30deg)) translate(-1px, 7px); }
+  100% { transform: rotate(var(--rig-rest-hand, 4deg)) translate(0, 0); }
+}
+
+@keyframes rigGtrElbow {
+  0% { transform: rotate(calc(var(--rig-rest-forearm, 10deg) - 9deg)); }
+  55% { transform: rotate(calc(var(--rig-rest-forearm, 10deg) + 13deg)); }
+  100% { transform: rotate(var(--rig-rest-forearm, 10deg)); }
+}
+
+@keyframes rigGtrFret {
+  0%, 100% { transform: rotate(var(--rig-rest-hand, -20deg)) translate(0, 0); }
+  50% { transform: rotate(calc(var(--rig-rest-hand, -20deg) + 7deg)) translate(-2px, -2px); }
+}
+
+@keyframes rigGtrSustain {
+  from { transform: rotate(calc(var(--rig-rest-hand, 4deg) - 8deg)) translate(0, -2px); }
+  to { transform: rotate(calc(var(--rig-rest-hand, 4deg) + 14deg)) translate(0, 3px); }
+}
+
+@keyframes rigGtrVibrato {
+  from { transform: rotate(calc(var(--rig-rest-hand, -20deg) - 3deg)) translate(-1px, 0); }
+  to { transform: rotate(calc(var(--rig-rest-hand, -20deg) + 3deg)) translate(1px, -1px); }
+}
+
+/* The guitar itself rocks with the groove while a note rings */
+.rig-playing .held-electric-guitar .held-play,
+.rig-playing .held-bass .held-play {
+  transform-box: fill-box;
+  transform-origin: 45% 55%;
+  animation: gtrBodyRock 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes gtrBodyRock {
+  from { transform: rotate(-1.6deg) translateY(-1px); }
+  to { transform: rotate(1.8deg) translateY(1.5px); }
+}
+
 /* Button press — lighter strike when play is held down */
-.rig-pose-strum .rig-arm-L.rig-press .rig-forearm-pose,
-.rig-pose-strum .rig-arm-R.rig-press-alt .rig-forearm-pose {
+.rig-arm-L.rig-pose-strum.rig-press .rig-forearm-pose,
+.rig-arm-R.rig-pose-strum.rig-press-alt .rig-forearm-pose {
   animation: rigStrumPressL 0.2s ease;
 }
 
-.rig-pose-strum .rig-arm-R.rig-press .rig-forearm-pose,
-.rig-pose-strum .rig-arm-L.rig-press-alt .rig-forearm-pose {
+.rig-arm-R.rig-pose-strum.rig-press .rig-forearm-pose,
+.rig-arm-L.rig-pose-strum.rig-press-alt .rig-forearm-pose {
   animation: rigStrumPressR 0.2s ease;
 }
 
-.rig-pose-drums .rig-arm-L.rig-press .rig-forearm-pose,
-.rig-pose-drums .rig-arm-L.rig-press .rig-stick {
+.rig-arm-L.rig-pose-drums.rig-press .rig-forearm-pose,
+.rig-arm-L.rig-pose-drums.rig-press .rig-stick {
   animation: rigDrumPressL 0.18s ease;
 }
 
-.rig-pose-drums .rig-arm-R.rig-press-alt .rig-forearm-pose,
-.rig-pose-drums .rig-arm-R.rig-press-alt .rig-stick {
+.rig-arm-R.rig-pose-drums.rig-press-alt .rig-forearm-pose,
+.rig-arm-R.rig-pose-drums.rig-press-alt .rig-stick {
   animation: rigDrumPressR 0.18s ease;
 }
 
-.rig-pose-keys .rig-arm-L.rig-press .rig-hand-pose,
-.rig-pose-keys .rig-arm-R.rig-press-alt .rig-hand-pose {
+.rig-arm-L.rig-pose-keys.rig-press .rig-hand-pose,
+.rig-arm-R.rig-pose-keys.rig-press-alt .rig-hand-pose {
   animation: rigKeyPress 0.18s ease;
 }
 
-.rig-pose-brass .rig-arm-R.rig-press-alt .rig-hand-pose {
+.rig-arm-R.rig-pose-brass.rig-press-alt .rig-hand-pose {
   animation: rigBrassPress 0.2s ease;
 }
 
 /* Sustained playing while button held */
-.rig-playing.rig-pose-strum .rig-arm-L.rig-press .rig-forearm-pose,
-.rig-playing.rig-pose-strum .rig-arm-R.rig-press-alt .rig-forearm-pose {
+.rig-playing .rig-arm-L.rig-pose-strum.rig-press .rig-forearm-pose,
+.rig-playing .rig-arm-R.rig-pose-strum.rig-press-alt .rig-forearm-pose {
   animation: rigStrumSustainL 0.5s ease-in-out infinite alternate;
 }
 
-.rig-playing.rig-pose-strum .rig-arm-R.rig-press .rig-forearm-pose,
-.rig-playing.rig-pose-strum .rig-arm-L.rig-press-alt .rig-forearm-pose {
+.rig-playing .rig-arm-R.rig-pose-strum.rig-press .rig-forearm-pose,
+.rig-playing .rig-arm-L.rig-pose-strum.rig-press-alt .rig-forearm-pose {
   animation: rigStrumSustainR 0.5s ease-in-out infinite alternate;
   animation-delay: 0.25s;
 }
 
-.rig-playing.rig-pose-keys .rig-arm-L.rig-press .rig-hand-pose,
-.rig-playing.rig-pose-keys .rig-arm-R.rig-press-alt .rig-hand-pose {
+.rig-playing .rig-arm-L.rig-pose-keys.rig-press .rig-hand-pose,
+.rig-playing .rig-arm-R.rig-pose-keys.rig-press-alt .rig-hand-pose {
   animation: rigKeySustain 0.45s ease-in-out infinite alternate;
 }
 
-.rig-playing.rig-pose-keys .rig-arm-R.rig-press .rig-hand-pose,
-.rig-playing.rig-pose-keys .rig-arm-L.rig-press-alt .rig-hand-pose {
+.rig-playing .rig-arm-R.rig-pose-keys.rig-press .rig-hand-pose,
+.rig-playing .rig-arm-L.rig-pose-keys.rig-press-alt .rig-hand-pose {
   animation: rigKeySustain 0.45s ease-in-out infinite alternate;
   animation-delay: 0.22s;
 }
 
-.rig-playing.rig-pose-drums .rig-arm-L.rig-press .rig-forearm-pose,
-.rig-playing.rig-pose-drums .rig-arm-R.rig-press-alt .rig-forearm-pose {
+.rig-playing .rig-arm-L.rig-pose-drums.rig-press .rig-forearm-pose,
+.rig-playing .rig-arm-R.rig-pose-drums.rig-press-alt .rig-forearm-pose {
   animation: rigDrumSustainL 0.35s ease-in-out infinite alternate;
 }
 
-.rig-playing.rig-pose-drums .rig-arm-R.rig-press .rig-forearm-pose,
-.rig-playing.rig-pose-drums .rig-arm-L.rig-press-alt .rig-forearm-pose {
+.rig-playing .rig-arm-R.rig-pose-drums.rig-press .rig-forearm-pose,
+.rig-playing .rig-arm-L.rig-pose-drums.rig-press-alt .rig-forearm-pose {
   animation: rigDrumSustainR 0.35s ease-in-out infinite alternate;
   animation-delay: 0.17s;
 }
@@ -3229,7 +3323,7 @@ body {
   animation: rigStickSustain 0.35s ease-in-out infinite alternate;
 }
 
-.rig-playing.rig-pose-brass .rig-arm-R.rig-press-alt .rig-hand-pose {
+.rig-playing .rig-arm-R.rig-pose-brass.rig-press-alt .rig-hand-pose {
   animation: rigBrassSustain 0.4s ease-in-out infinite alternate;
 }
 

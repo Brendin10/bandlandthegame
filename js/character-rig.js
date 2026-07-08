@@ -3,6 +3,7 @@ const CharacterRig = (() => {
 
   const HOLD_TO_POSE = {
     strum: 'strum',
+    guitar: 'guitar',
     keys: 'keys',
     'two-hand': 'drums',
     'one-hand-up': 'brass',
@@ -23,8 +24,8 @@ const CharacterRig = (() => {
     R: { x: 142, y: 148 },
   };
 
-  const DEFAULT_FOREARM = { strum: { L: 38, R: 44 }, keys: { L: 26, R: 26 }, drums: { L: 20, R: 20 }, brass: { L: 8, R: 52 }, idle: { L: 18, R: 18 } };
-  const DEFAULT_HAND = { strum: { L: 8, R: 6 }, keys: { L: 0, R: 0 }, drums: { L: 0, R: 0 }, brass: { L: 0, R: 18 }, idle: { L: 0, R: 0 } };
+  const DEFAULT_FOREARM = { strum: { L: 38, R: 44 }, guitar: { L: -34, R: 10 }, keys: { L: 26, R: 26 }, drums: { L: 20, R: 20 }, brass: { L: 8, R: 52 }, idle: { L: 18, R: 18 } };
+  const DEFAULT_HAND = { strum: { L: 8, R: 6 }, guitar: { L: -20, R: 4 }, keys: { L: 0, R: 0 }, drums: { L: 0, R: 0 }, brass: { L: 0, R: 18 }, idle: { L: 0, R: 0 } };
 
   function poseFromHold(hold) {
     return HOLD_TO_POSE[hold] || 'idle';
@@ -52,6 +53,16 @@ const CharacterRig = (() => {
     return { forearm: Math.round(forearm * 10) / 10, hand: Math.round(hand * 10) / 10 };
   }
 
+  // Per-pose joint offsets. The guitar pose reshapes the arms so the fret
+  // hand actually reaches up the neck and the strum hand hangs over the
+  // strings, instead of both hands dangling at the hips.
+  const CHAIN_GEOM = {
+    guitar: {
+      L: { upper: { cx: 4, cy: 8 }, forearm: { x: -8, y: 8 }, hand: { x: -13, y: 15 } },
+      R: { upper: { cx: -10, cy: 9 }, forearm: { x: -2, y: 16 }, hand: { x: -6, y: 29 } },
+    },
+  };
+
   function armChain(side, colors, pose, layer, options = {}) {
     const isLeft = side === 'L';
     const sx = SHOULDER[side].x;
@@ -61,25 +72,32 @@ const CharacterRig = (() => {
     const furLight = colors.furLight || '#BC94FF';
     const hand = colors.hand || '#D2B2FF';
     const poseCls = `rig-pose-${pose}`;
+    const geom = CHAIN_GEOM[pose]?.[side] || { upper: { cx: 12 * toward, cy: 10 }, forearm: { x: 0, y: 18 }, hand: { x: 0, y: 32 } };
 
     const stick = pose === 'drums' && !options.hideSticks
       ? `<line class="rig-stick" x1="${isLeft ? 28 : 172}" y1="188" x2="${isLeft ? 18 : 182}" y2="168" stroke="#8B7355" stroke-width="3" stroke-linecap="round"/>
          <ellipse class="rig-stick-tip" cx="${isLeft ? 16 : 184}" cy="166" rx="4" ry="3" fill="#deb887" stroke="${OUTLINE}" stroke-width="1"/>`
       : '';
 
+    // The strumming hand holds a pick so the strum reads instantly.
+    const pick = pose === 'guitar' && !isLeft
+      ? `<polygon class="rig-pick" points="-2,11 -8,20 4,19" fill="#f8f2e6" stroke="${OUTLINE}" stroke-width="1.6" stroke-linejoin="round"/>`
+      : '';
+
     return `
       <g class="rig-arm rig-arm-${side} rig-layer-${layer} ${poseCls}" transform="translate(${sx},${shoulderY})">
         <g class="rig-upper-arm">
-          <ellipse cx="${12 * toward}" cy="10" rx="17" ry="14" fill="${fur}" stroke="${OUTLINE}" stroke-width="3"/>
+          <ellipse cx="${geom.upper.cx}" cy="${geom.upper.cy}" rx="17" ry="14" fill="${fur}" stroke="${OUTLINE}" stroke-width="3"/>
         </g>
-        <g class="rig-forearm" transform="translate(0,18)">
+        <g class="rig-forearm" transform="translate(${geom.forearm.x},${geom.forearm.y})">
           <g class="rig-forearm-pose" style="transform-box:fill-box;transform-origin:0 0">
             <ellipse cx="0" cy="14" rx="11" ry="13" fill="${furLight}" stroke="${OUTLINE}" stroke-width="2.5"/>
           </g>
         </g>
-        <g class="rig-hand" transform="translate(0,32)">
+        <g class="rig-hand" transform="translate(${geom.hand.x},${geom.hand.y})">
           <g class="rig-hand-pose" style="transform-box:fill-box;transform-origin:0 0">
             <ellipse cx="0" cy="6" rx="9" ry="8" fill="${hand}" stroke="${OUTLINE}" stroke-width="2"/>
+            ${pick}
           </g>
         </g>
         ${stick}
@@ -110,6 +128,12 @@ const CharacterRig = (() => {
 
   function hitClassForArm(side, pose, phase) {
     const isLeft = side === 'L';
+    if (pose === 'guitar') {
+      // The right hand always does the strumming; the fret hand only gets a
+      // small finger-shift pulse via its -alt class.
+      if (phase === 'press') return isLeft ? 'rig-press-alt' : 'rig-press';
+      return isLeft ? 'rig-hit-alt' : 'rig-hit';
+    }
     if (phase === 'press') {
       return isLeft ? 'rig-press' : 'rig-press-alt';
     }
@@ -121,7 +145,7 @@ const CharacterRig = (() => {
 
   function applyPose(rootEl, pose, phase = 'hit') {
     if (!rootEl) return;
-    const poses = ['idle', 'strum', 'keys', 'drums', 'brass'];
+    const poses = ['idle', 'strum', 'guitar', 'keys', 'drums', 'brass'];
     rootEl.querySelectorAll('.rig-arm').forEach((arm) => {
       poses.forEach((p) => arm.classList.remove(`rig-pose-${p}`));
       arm.classList.add(`rig-pose-${pose}`);
@@ -150,7 +174,9 @@ const CharacterRig = (() => {
 
     rootEl.querySelectorAll('.rig-arm').forEach((arm) => {
       const side = arm.classList.contains('rig-arm-L') ? 'L' : 'R';
-      const aim = computeArmAim(side, grips[side], pose);
+      // Grips can pin exact rest angles (used by the guitar pose, whose
+      // custom chain geometry doesn't suit the generic aim solver).
+      const aim = grip.rest?.[side] || computeArmAim(side, grips[side], pose);
       const fb = DEFAULT_FOREARM[pose] || DEFAULT_FOREARM.idle;
       const hb = DEFAULT_HAND[pose] || DEFAULT_HAND.idle;
       arm.style.setProperty('--rig-rest-forearm', `${aim.forearm}deg`);
