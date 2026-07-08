@@ -3161,6 +3161,67 @@ body {
   transform: rotate(var(--rig-rest-hand, 18deg));
 }
 
+/* Back pair of arms: thrown up in a rock-on pose. Fixed angles (they don't
+ * track the instrument grip), fists pump on every hit and bob while a note
+ * is held. Extra class beats the per-pose rest rules in specificity. */
+.rig-arm-L.rig-layer-back .rig-forearm-pose {
+  transform: rotate(-38deg);
+}
+
+.rig-arm-R.rig-layer-back .rig-forearm-pose {
+  transform: rotate(38deg);
+}
+
+.rig-arm-L.rig-layer-back .rig-hand-pose {
+  transform: rotate(-24deg);
+}
+
+.rig-arm-R.rig-layer-back .rig-hand-pose {
+  transform: rotate(24deg);
+}
+
+.rig-arm-L.rig-layer-back.rig-hit .rig-hand-pose,
+.rig-arm-L.rig-layer-back.rig-hit-alt .rig-hand-pose,
+.rig-arm-L.rig-layer-back.rig-press .rig-hand-pose,
+.rig-arm-L.rig-layer-back.rig-press-alt .rig-hand-pose {
+  animation: rigBackPumpL 0.26s ease;
+}
+
+.rig-arm-R.rig-layer-back.rig-hit .rig-hand-pose,
+.rig-arm-R.rig-layer-back.rig-hit-alt .rig-hand-pose,
+.rig-arm-R.rig-layer-back.rig-press .rig-hand-pose,
+.rig-arm-R.rig-layer-back.rig-press-alt .rig-hand-pose {
+  animation: rigBackPumpR 0.26s ease;
+}
+
+.rig-playing .rig-arm-L.rig-layer-back .rig-hand-pose {
+  animation: rigBackBobL 0.5s ease-in-out infinite alternate;
+}
+
+.rig-playing .rig-arm-R.rig-layer-back .rig-hand-pose {
+  animation: rigBackBobR 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes rigBackPumpL {
+  0%, 100% { transform: rotate(-24deg) translate(0, 0); }
+  45% { transform: rotate(-34deg) translate(-2px, -8px); }
+}
+
+@keyframes rigBackPumpR {
+  0%, 100% { transform: rotate(24deg) translate(0, 0); }
+  45% { transform: rotate(34deg) translate(2px, -8px); }
+}
+
+@keyframes rigBackBobL {
+  from { transform: rotate(-24deg) translate(0, 0); }
+  to { transform: rotate(-32deg) translate(-1px, -5px); }
+}
+
+@keyframes rigBackBobR {
+  from { transform: rotate(24deg) translate(0, 0); }
+  to { transform: rotate(32deg) translate(1px, -5px); }
+}
+
 /* Guitar & bass: slung hold. Rest angles pin the fret hand to the neck and
  * hover the pick hand over the strings. */
 .rig-arm-L.rig-pose-guitar .rig-forearm-pose {

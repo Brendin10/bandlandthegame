@@ -53,14 +53,22 @@ const CharacterRig = (() => {
     return { forearm: Math.round(forearm * 10) / 10, hand: Math.round(hand * 10) / 10 };
   }
 
-  // Per-pose joint offsets. The guitar pose reshapes the arms so the fret
-  // hand actually reaches up the neck and the strum hand hangs over the
-  // strings, instead of both hands dangling at the hips.
-  const CHAIN_GEOM = {
+  // Per-pose joint offsets. The guitar pose reshapes the front arms so the
+  // fret hand actually reaches up the neck and the strum hand hangs over
+  // the strings, instead of both hands dangling at the hips.
+  const FRONT_GEOM = {
     guitar: {
       L: { upper: { cx: 4, cy: 8 }, forearm: { x: -8, y: 8 }, hand: { x: -13, y: 15 } },
       R: { upper: { cx: -10, cy: 9 }, forearm: { x: -2, y: 16 }, hand: { x: -6, y: 29 } },
     },
+  };
+
+  // The BACK pair of arms. These monsters have four arms on purpose: while
+  // the front pair plays the instrument, the back pair is thrown up in a
+  // rock-on pose - same rig style as the front, fists in the air.
+  const BACK_GEOM = {
+    L: { upper: { cx: -6, cy: -2 }, forearm: { x: -15, y: -20 }, hand: { x: -25, y: -32 } },
+    R: { upper: { cx: 6, cy: -2 }, forearm: { x: 15, y: -20 }, hand: { x: 25, y: -32 } },
   };
 
   function armChain(side, colors, pose, layer, options = {}) {
@@ -72,15 +80,17 @@ const CharacterRig = (() => {
     const furLight = colors.furLight || '#BC94FF';
     const hand = colors.hand || '#D2B2FF';
     const poseCls = `rig-pose-${pose}`;
-    const geom = CHAIN_GEOM[pose]?.[side] || { upper: { cx: 12 * toward, cy: 10 }, forearm: { x: 0, y: 18 }, hand: { x: 0, y: 32 } };
+    const geom = layer === 'back'
+      ? BACK_GEOM[side]
+      : (FRONT_GEOM[pose]?.[side] || { upper: { cx: 12 * toward, cy: 10 }, forearm: { x: 0, y: 18 }, hand: { x: 0, y: 32 } });
 
-    const stick = pose === 'drums' && !options.hideSticks
+    const stick = pose === 'drums' && layer !== 'back' && !options.hideSticks
       ? `<line class="rig-stick" x1="${isLeft ? 28 : 172}" y1="188" x2="${isLeft ? 18 : 182}" y2="168" stroke="#8B7355" stroke-width="3" stroke-linecap="round"/>
          <ellipse class="rig-stick-tip" cx="${isLeft ? 16 : 184}" cy="166" rx="4" ry="3" fill="#deb887" stroke="${OUTLINE}" stroke-width="1"/>`
       : '';
 
     // The strumming hand holds a pick so the strum reads instantly.
-    const pick = pose === 'guitar' && !isLeft
+    const pick = pose === 'guitar' && !isLeft && layer !== 'back'
       ? `<polygon class="rig-pick" points="-2,11 -8,20 4,19" fill="#f8f2e6" stroke="${OUTLINE}" stroke-width="1.6" stroke-linejoin="round"/>`
       : '';
 
