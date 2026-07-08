@@ -56,11 +56,11 @@ const result = await page.evaluate(async () => {
   layer.querySelector('[data-action="back-hub"]').onclick = () => window.Bandland.exitToHub();
 
   layer.querySelector('[data-action="back-hub"]').click();
-  await new Promise((r) => setTimeout(r, 300));
+  await new Promise((r) => setTimeout(r, 1100));
 
   return {
     hasLayer: !!document.getElementById('gig-results-layer'),
-    onHub: !!document.querySelector('.hub-screen'),
+    onHub: !!document.querySelector('.greenroom-screen'),
     overlayHidden: document.getElementById('gig-results-layer')?.classList.contains('hidden'),
     curtainPE: getComputedStyle(curtain).pointerEvents,
   };

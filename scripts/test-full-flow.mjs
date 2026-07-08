@@ -91,12 +91,12 @@ try {
 
   if (end?.back) {
     await page.click('#gig-results-layer [data-action="back-hub"]');
-    await new Promise((r) => setTimeout(r, 400));
-    const hub = await page.evaluate(() => ({
-      hub: !!document.querySelector('.hub-screen'),
+    await new Promise((r) => setTimeout(r, 1100));
+    const back = await page.evaluate(() => ({
+      greenroom: !!document.querySelector('.greenroom-screen'),
       hidden: document.getElementById('gig-results-layer')?.classList.contains('hidden'),
     }));
-    log('Return to hub', hub.hub && hub.hidden, JSON.stringify(hub));
+    log('Return to Green Room', back.greenroom && back.hidden, JSON.stringify(back));
   }
 
   console.log(`\n--- ${issues.length ? `${issues.length} ISSUE(S)` : 'ALL PASSED'} ---`);

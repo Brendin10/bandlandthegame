@@ -2775,6 +2775,19 @@ body {
   position: relative;
 }
 
+.lineup-slot.on-fire::before,
+.bandmate-slot.on-fire::before {
+  content: '🔥';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  z-index: 25;
+  animation: flameBob 0.35s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 8px #ff6600);
+}
+
 .flame-aura {
   position: absolute;
   left: 50%;

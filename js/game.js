@@ -605,7 +605,7 @@ const Game = (() => {
     openGigResultsOverlay(html);
     state.gigResultsShown = true;
     teardownGigSession();
-    setScreen('hub');
+    setScreen('greenroom');
     const layer = document.getElementById('gig-results-layer');
     if (layer) bindGigResultsExit(layer);
     clearGigEndWatchdog();
@@ -749,7 +749,9 @@ const Game = (() => {
     state.pendingGigResults = null;
     state.gigResultsShown = false;
     persist();
-    setScreen('hub');
+    // Leaving the stage takes you backstage, not straight home - curtain
+    // closes on the gig and opens on the Green Room, ready for the next set.
+    runCurtainTransition('greenroom', 'Back to the Green Room…');
   }
 
   function resetPerformanceTimers() {
@@ -2366,6 +2368,12 @@ const Game = (() => {
     curtain.setAttribute('aria-hidden', phase === 'idle' || phase === 'done' ? 'true' : 'false');
     const blockPointer = ['closing', 'loading', 'opening'].includes(phase);
     curtain.style.pointerEvents = blockPointer ? 'auto' : 'none';
+    if (blockPointer) {
+      // dismissStageCurtain() hides the overlay with inline styles; clear
+      // them here or the curtain stays invisible for every later transition.
+      curtain.style.visibility = '';
+      curtain.style.opacity = '';
+    }
     if (status) status.textContent = message;
   }
 
@@ -2386,16 +2394,14 @@ const Game = (() => {
   // Curtain-wrapped transition from the hub into the Green Room: close the
   // curtain like a gig intro, swap screens behind it, then reveal the
   // dressing room. Mirrors runGigIntroSequence's phases minus the loading.
-  async function enterGreenRoom() {
+  async function runCurtainTransition(targetScreen, statusMsg = '') {
     if (state.curtainTransition || state.gigIntroRunning) return;
     state.curtainTransition = true;
-    const btn = document.getElementById('btn-greenroom');
-    if (btn) btn.disabled = true;
     try {
       AudioEngine.resume();
-      setCurtainState('closing', 'Heading backstage…');
+      setCurtainState('closing', statusMsg);
       await waitMs(650);
-      setScreen('greenroom');
+      setScreen(targetScreen);
       await waitMs(80);
       setCurtainState('opening');
       await waitMs(800);
@@ -2404,6 +2410,12 @@ const Game = (() => {
       state.curtainTransition = false;
       dismissStageCurtain();
     }
+  }
+
+  function enterGreenRoom() {
+    const btn = document.getElementById('btn-greenroom');
+    if (btn) btn.disabled = true;
+    return runCurtainTransition('greenroom', 'Heading backstage…');
   }
 
   async function runGigIntroSequence() {
@@ -2594,7 +2606,10 @@ const Game = (() => {
     const streak = hotStreakMult(p);
     if (note) {
       if (!opts.skipHitAudio) {
-        playInstrumentHit(note, inst, (rating === 'perfect' ? 1.15 : 1.05) * streak);
+        // A perfect or hot-streak hit gets a small presence boost, not the
+        // full 1.5x streak multiplier - that stacked into clipping, which is
+        // what made hits sound like they were clashing with the band.
+        playInstrumentHit(note, inst, (rating === 'perfect' ? 1.12 : 1.04) * (hot ? 1.12 : 1));
       }
       RhythmLane.explodeGem(note, rating, isMelodic, hot);
     } else {

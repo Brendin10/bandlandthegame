@@ -58,10 +58,10 @@ const result = await page.evaluate(async () => {
   };
   btn.click();
 
-  await new Promise((r) => setTimeout(r, 600));
+  await new Promise((r) => setTimeout(r, 1100));
 
   return {
-    hasHub: !!document.querySelector('.hub-screen'),
+    hasGreenRoom: !!document.querySelector('.greenroom-screen'),
     hasPerform: !!document.querySelector('.perform-screen'),
     hasVenueGrid: !!document.querySelector('.venue-grid'),
     hasChooseVenue: document.body.innerText.includes('Choose Your Venue'),
@@ -73,6 +73,6 @@ const result = await page.evaluate(async () => {
 console.log(JSON.stringify(result, null, 2));
 await browser.close();
 
-const ok = result.hasHub && !result.hasPerform && result.hasVenueGrid
+const ok = result.hasGreenRoom && !result.hasPerform && result.hasVenueGrid
   && result.hasChooseVenue && result.overlayHidden && !result.hasBooedOverlay;
 process.exit(ok ? 0 : 1);

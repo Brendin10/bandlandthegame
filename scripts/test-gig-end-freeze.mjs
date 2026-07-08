@@ -48,7 +48,7 @@ async function waitForOverlay(maxMs = 5000) {
         text: layer?.textContent?.slice(0, 60) || '',
         back: !!layer?.querySelector('[data-action="back-hub"]'),
         perform: !!document.querySelector('.perform-screen'),
-        hub: !!document.querySelector('.hub-screen'),
+        backstage: !!document.querySelector('.greenroom-screen'),
       };
     });
     if (snap.open && snap.back) return snap;
@@ -68,25 +68,25 @@ try {
   const results = await waitForOverlay(6000);
   log('Song end overlay', !!results?.open, results?.text);
   log('Song end Back button', !!results?.back);
-  log('Hub under overlay', !!results?.hub);
+  log('Green Room under overlay', !!results?.backstage);
 
   if (results?.back) {
     await page.click('#gig-results-layer [data-action="back-hub"]');
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 1100));
     const hub = await page.evaluate(() => ({
-      hub: !!document.querySelector('.hub-screen'),
+      backstage: !!document.querySelector('.greenroom-screen'),
       overlayHidden: document.getElementById('gig-results-layer')?.classList.contains('hidden'),
       performGone: !document.querySelector('.perform-screen'),
     }));
-    log('Back to Map after song', hub.hub && hub.overlayHidden && hub.performGone, JSON.stringify(hub));
+    log('Back to Green Room after song', hub.backstage && hub.overlayHidden && hub.performGone, JSON.stringify(hub));
   }
 
-  // Wait out perform suppress cooldown before next gig
-  await new Promise((r) => setTimeout(r, 1600));
-  await page.waitForSelector('#btn-greenroom', { timeout: 10000 });
+  // Exiting a gig now lands in the Green Room; wait out the curtain
+  // transition + perform suppress cooldown, then start the next gig.
+  await new Promise((r) => setTimeout(r, 2400));
+  await page.waitForSelector('.greenroom-screen', { timeout: 10000 });
 
   // Test 2: Booed end screen
-  await enterGreenRoom();
   await page.click('#btn-perform');
   await page.waitForSelector('.perform-screen', { timeout: 30000 });
   await page.waitForFunction(
@@ -99,17 +99,17 @@ try {
 
   if (booedSnap?.back) {
     await page.click('#gig-results-layer [data-action="back-hub"]');
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 1100));
     const hub2 = await page.evaluate(() => ({
-      hub: !!document.querySelector('.hub-screen'),
+      backstage: !!document.querySelector('.greenroom-screen'),
       overlayHidden: document.getElementById('gig-results-layer')?.classList.contains('hidden'),
     }));
-    log('Back to Map after booed', hub2.hub && hub2.overlayHidden, JSON.stringify(hub2));
+    log('Back to Green Room after booed', hub2.backstage && hub2.overlayHidden, JSON.stringify(hub2));
   }
 
   // Test 3: Watchdog recovery when overlay flag set but layer empty
-  await new Promise((r) => setTimeout(r, 1600));
-  await enterGreenRoom();
+  await new Promise((r) => setTimeout(r, 2400));
+  await page.waitForSelector('.greenroom-screen', { timeout: 10000 });
   await page.click('#btn-perform');
   await page.waitForSelector('.perform-screen', { timeout: 30000 });
   await new Promise((r) => setTimeout(r, 7000));

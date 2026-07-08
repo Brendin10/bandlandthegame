@@ -8,7 +8,7 @@ const StemPlayer = (() => {
   let startElapsed = 0;
   let playerStemKey = 'Drums';
   let fullMixVolume = 0.85;
-  let playerStemVolume = 1.15;
+  let playerStemVolume = 1.08;
   let fullMixGain = null;
   let playerStemGain = null;
   let backingGain = null;
@@ -21,8 +21,8 @@ const StemPlayer = (() => {
 
   const STEM_KEYS = ['Bass', 'Drums', 'Lead', 'Keys', 'Full'];
   const TRACK_STEMS = ['Bass', 'Drums', 'Lead', 'Keys'];
-  const HIT_DUCK_MIX = 0.52;
-  const HIT_DUCK_SEC = 0.16;
+  const HIT_DUCK_MIX = 0.68;
+  const HIT_DUCK_SEC = 0.12;
 
   function getCtx() {
     return AudioEngine.getCtx();
@@ -41,7 +41,7 @@ const StemPlayer = (() => {
     buffers = {};
     playerStemKey = options.playerStemKey !== undefined ? options.playerStemKey : 'Drums';
     fullMixVolume = songObj?.fullMixVolume ?? 0.85;
-    playerStemVolume = options.playerStemVolume ?? 1.15;
+    playerStemVolume = options.playerStemVolume ?? 1.08;
 
     if (!song?.stems) return false;
     const ac = getCtx();
@@ -61,7 +61,18 @@ const StemPlayer = (() => {
     if (!stemBus) {
       stemBus = ac.createGain();
       stemBus.gain.value = 0.85;
-      stemBus.connect(AudioEngine.initMix?.() || ac.destination);
+      // Gentle "glue" compressor over the entire song bus (backing + player
+      // hits together). It tames the peaks when a hit, the backing band and
+      // a crowd swell stack up, so nothing clips or clashes - everything
+      // gets squeezed into one coherent mix instead.
+      const glue = ac.createDynamicsCompressor();
+      glue.threshold.value = -14;
+      glue.knee.value = 24;
+      glue.ratio.value = 3;
+      glue.attack.value = 0.006;
+      glue.release.value = 0.2;
+      stemBus.connect(glue);
+      glue.connect(AudioEngine.initMix?.() || ac.destination);
     }
     if (!fullMixGain) {
       fullMixGain = ac.createGain();
@@ -112,6 +123,12 @@ const StemPlayer = (() => {
     return Math.max(noteDur, 0.3);
   }
 
+  function songNowSec() {
+    if (!running) return null;
+    const ac = getCtx();
+    return startElapsed + Math.max(0, ac.currentTime - startCtxTime);
+  }
+
   function duckBackingForHit() {
     if (!backingGain) return;
     const ac = getCtx();
@@ -135,15 +152,35 @@ const StemPlayer = (() => {
     ensureBus();
     const now = ac.currentTime;
     const chartOffset = noteTimeSec(note, songObj, bpm);
-    const offset = Math.min(Math.max(chartOffset, 0), Math.max(0, buf.duration - 0.02));
+    let offset = Math.min(Math.max(chartOffset, 0), Math.max(0, buf.duration - 0.02));
     let duration = sliceDuration(note, songObj, bpm);
+    let when = now;
+
+    // Quantize the hit onto the song grid. A press inside the hit window can
+    // be ~100ms early or late; playing the slice exactly at press time made
+    // it land off-grid against the backing stems, which read as the note
+    // "clashing". Late press: start that far INTO the slice so it lines up
+    // with where the band already is. Early press: schedule the slice for
+    // the precise moment the song reaches the note.
+    const songPos = songNowSec();
+    if (songPos != null) {
+      const drift = songPos - chartOffset;
+      if (drift > 0.01 && drift < 0.3) {
+        offset = Math.min(offset + drift, Math.max(0, buf.duration - 0.02));
+        duration -= drift;
+      } else if (drift < -0.01 && drift > -0.3) {
+        when = now - drift;
+      }
+    }
     duration = Math.min(duration, buf.duration - offset);
     if (duration <= 0.01) return false;
 
     const src = ac.createBufferSource();
     src.buffer = buf;
     const gain = ac.createGain();
-    const vol = (note.hit ? 1.08 : 1.02) * volScale;
+    // Cap the scaling so streak/perfect multipliers can never push the
+    // player stem into clipping territory.
+    const vol = (note.hit ? 1.06 : 1.0) * Math.min(volScale, 1.35);
     // Hold the note at full volume for almost its whole length and only
     // release right at the tail - ramping the gain down across the entire
     // duration (the old behaviour) made even a "full length" slice sound
@@ -151,13 +188,13 @@ const StemPlayer = (() => {
     // short strum no matter how long `duration` actually was.
     const attack = Math.min(0.008, duration * 0.2);
     const release = Math.min(0.12, Math.max(0.03, duration * 0.25));
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(vol, now + attack);
-    gain.gain.setValueAtTime(vol, Math.max(now + attack, now + duration - release));
-    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    gain.gain.setValueAtTime(0.0001, when);
+    gain.gain.exponentialRampToValueAtTime(vol, when + attack);
+    gain.gain.setValueAtTime(vol, Math.max(when + attack, when + duration - release));
+    gain.gain.exponentialRampToValueAtTime(0.001, when + duration);
     src.connect(gain);
     gain.connect(playerStemGain);
-    src.start(now, offset, duration);
+    src.start(when, offset, duration);
     duckBackingForHit();
     return true;
   }
@@ -170,20 +207,33 @@ const StemPlayer = (() => {
     const ac = getCtx();
     ensureBus();
     const now = ac.currentTime;
-    const offset = Math.min(Math.max(noteTimeSec(note, songObj, bpm), 0), Math.max(0, buf.duration - 0.02));
+    const chartOffset = noteTimeSec(note, songObj, bpm);
+    let offset = Math.min(Math.max(chartOffset, 0), Math.max(0, buf.duration - 0.02));
     const beatDur = 60 / bpm;
-    let duration = Math.min((note.dur || 1) * beatDur, buf.duration - offset);
+    let duration = (note.dur || 1) * beatDur;
+    let when = now;
+    const songPos = songNowSec();
+    if (songPos != null) {
+      const drift = songPos - chartOffset;
+      if (drift > 0.01 && drift < 0.3) {
+        offset = Math.min(offset + drift, Math.max(0, buf.duration - 0.02));
+        duration -= drift;
+      } else if (drift < -0.01 && drift > -0.3) {
+        when = now - drift;
+      }
+    }
+    duration = Math.min(duration, buf.duration - offset);
     if (duration <= 0.05) return false;
 
     const src = ac.createBufferSource();
     src.buffer = buf;
     const gain = ac.createGain();
-    const vol = 0.78 * volScale;
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(vol, now + 0.03);
+    const vol = 0.78 * Math.min(volScale, 1.35);
+    gain.gain.setValueAtTime(0, when);
+    gain.gain.linearRampToValueAtTime(vol, when + 0.03);
     src.connect(gain);
     gain.connect(playerStemGain);
-    src.start(now, offset, duration);
+    src.start(when, offset, duration);
     sustainSource = src;
     sustainGain = gain;
     return true;
