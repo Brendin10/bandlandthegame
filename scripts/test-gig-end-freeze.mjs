@@ -27,8 +27,15 @@ async function loadAndStartGig() {
   await page.reload({ waitUntil: 'networkidle0' });
   await page.click('#btn-continue');
   await page.waitForSelector('.hub-screen', { timeout: 10000 });
+  await enterGreenRoom();
   await page.click('#btn-perform');
   await page.waitForSelector('.perform-screen', { timeout: 30000 });
+}
+
+async function enterGreenRoom() {
+  await page.click('#btn-greenroom');
+  await page.waitForSelector('.greenroom-screen', { timeout: 10000 });
+  await new Promise((r) => setTimeout(r, 1800));
 }
 
 async function waitForOverlay(maxMs = 5000) {
@@ -76,9 +83,10 @@ try {
 
   // Wait out perform suppress cooldown before next gig
   await new Promise((r) => setTimeout(r, 1600));
-  await page.waitForSelector('#btn-perform', { timeout: 10000 });
+  await page.waitForSelector('#btn-greenroom', { timeout: 10000 });
 
   // Test 2: Booed end screen
+  await enterGreenRoom();
   await page.click('#btn-perform');
   await page.waitForSelector('.perform-screen', { timeout: 30000 });
   await page.waitForFunction(
@@ -101,6 +109,7 @@ try {
 
   // Test 3: Watchdog recovery when overlay flag set but layer empty
   await new Promise((r) => setTimeout(r, 1600));
+  await enterGreenRoom();
   await page.click('#btn-perform');
   await page.waitForSelector('.perform-screen', { timeout: 30000 });
   await new Promise((r) => setTimeout(r, 7000));

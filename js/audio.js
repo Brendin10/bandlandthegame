@@ -1786,7 +1786,7 @@ const AudioEngine = (() => {
     osc.type = 'sine';
     osc.frequency.setValueAtTime(1400, now);
     osc.frequency.exponentialRampToValueAtTime(950, now + 0.045);
-    const g = masterGain(ac, now, 0.09 * vol, 0.06, 0, 'perc');
+    const g = masterGain(ac, now, 0.18 * vol, 0.06, 0, 'perc');
     osc.connect(g);
     osc.start(now);
     osc.stop(now + 0.06);

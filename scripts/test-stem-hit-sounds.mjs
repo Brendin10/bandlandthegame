@@ -45,6 +45,9 @@ for (const tc of cases) {
     window.__expectStem = expectStem;
   }, tc.expectStem);
 
+  await page.click('#btn-greenroom');
+  await page.waitForSelector('.greenroom-screen', { timeout: 10000 });
+  await new Promise((r) => setTimeout(r, 1800));
   await page.click('#btn-perform');
   await page.waitForSelector('.perform-screen', { timeout: 20000 });
   await new Promise((r) => setTimeout(r, 5500));

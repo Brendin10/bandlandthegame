@@ -3320,3 +3320,264 @@ body {
   width: 180px !important;
 }
 
+
+/* Minimal hub */
+.hub-minimal {
+  max-width: 420px;
+  margin: 24px auto 0;
+  text-align: center;
+  background: var(--bg-panel);
+  border: 1px solid rgba(155, 107, 255, 0.2);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
+}
+
+.hub-actions-column {
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: 18px;
+}
+
+.btn-greenroom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.greenroom-btn-icon {
+  font-size: 1.8rem;
+}
+
+/* The Green Room (backstage dressing room) */
+.greenroom-screen {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: 32px;
+}
+
+.gr-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.gr-title {
+  flex: 1;
+  margin: 0;
+}
+
+.gr-appeal {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.gr-room {
+  position: relative;
+  border-radius: var(--radius);
+  padding: 40px 20px 20px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(255, 209, 102, 0.25);
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.55)),
+    repeating-linear-gradient(90deg, #3a2417 0 46px, #432b1b 46px 92px);
+  overflow: hidden;
+}
+
+.gr-room::after {
+  /* warm lamp glow */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 45% at 28% 30%, rgba(255, 209, 102, 0.16), transparent 70%);
+}
+
+.gr-sign {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 209, 102, 0.55);
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+  z-index: 2;
+}
+
+.gr-stage-row {
+  position: relative;
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  z-index: 1;
+}
+
+.gr-mirror-wrap {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gr-mirror {
+  position: relative;
+  padding: 34px 26px 12px;
+  border-radius: 14px 14px 4px 4px;
+  border: 3px solid #6b4a2f;
+  background: linear-gradient(200deg, rgba(210, 225, 240, 0.16), rgba(120, 140, 165, 0.08) 55%, rgba(0, 0, 0, 0.2));
+  box-shadow: inset 0 0 24px rgba(255, 246, 214, 0.12), 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.gr-bulbs {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.gr-bulb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff8d6, var(--gold) 60%, #b8862d);
+  box-shadow: 0 0 10px rgba(255, 209, 102, 0.85);
+  animation: grBulbGlow 2.4s ease-in-out infinite;
+}
+
+.gr-bulb:nth-child(2n) { animation-delay: 0.6s; }
+.gr-bulb:nth-child(3n) { animation-delay: 1.2s; }
+
+@keyframes grBulbGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 209, 102, 0.85); }
+  50% { box-shadow: 0 0 4px rgba(255, 209, 102, 0.4); }
+}
+
+.gr-vanity {
+  width: 100%;
+  height: 14px;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, #6b4a2f, #4a3120);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.gr-bandmates {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  padding-bottom: 6px;
+}
+
+.gr-bandmate {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.gr-bandmate-btn {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: transform 0.15s, filter 0.2s, opacity 0.2s;
+}
+
+.gr-bandmate-btn:hover {
+  transform: translateY(-3px);
+}
+
+.gr-bandmate.benched .gr-bandmate-btn {
+  filter: grayscale(0.9) brightness(0.6);
+  opacity: 0.75;
+}
+
+.gr-bandmate-badge {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: rgba(57, 255, 20, 0.18);
+  border: 1px solid rgba(57, 255, 20, 0.5);
+  color: var(--green);
+}
+
+.gr-bandmate.benched .gr-bandmate-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--muted);
+}
+
+.gr-bandmate-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.gr-bandmate .btn-drop-member {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.gr-bandmate:hover .btn-drop-member,
+.gr-bandmate:focus-within .btn-drop-member {
+  opacity: 1;
+}
+
+.gr-bandmate.empty {
+  opacity: 0.8;
+  padding: 4px;
+}
+
+.gr-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.gr-panel {
+  background: var(--bg-panel);
+  border: 1px solid rgba(155, 107, 255, 0.2);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.gr-panel h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.gr-venue h3 {
+  margin-bottom: 12px;
+}
+
+@media (max-width: 700px) {
+  .gr-stage-row {
+    justify-content: center;
+  }
+}

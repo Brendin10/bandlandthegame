@@ -38,6 +38,11 @@ try {
   await new Promise((r) => setTimeout(r, 300));
   await page.waitForSelector('.hub-screen', { timeout: 5000 });
 
+  await page.click('#btn-greenroom');
+  await page.waitForSelector('.greenroom-screen', { timeout: 10000 });
+  log('Green Room opens', true);
+  await new Promise((r) => setTimeout(r, 1800));
+
   await page.click('#btn-perform');
   await page.waitForSelector('.perform-screen', { timeout: 30000 });
   log('Gig starts', true);

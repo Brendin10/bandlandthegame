@@ -373,7 +373,7 @@ const Game = (() => {
     // curtain should only ever be active while state.gigIntroRunning is true
     // and we're heading into 'perform', force it closed for every other
     // screen we land on.
-    if (name !== 'perform' && !state.gigIntroRunning) {
+    if (name !== 'perform' && !state.gigIntroRunning && !state.curtainTransition) {
       dismissStageCurtain();
     }
     updateHud();
@@ -931,6 +931,30 @@ const Game = (() => {
   function renderHub() {
     const char = CHARACTERS[state.character] || CHARACTERS.benny;
     const appeal = crowdAppeal();
+    const inst = getActiveInstrument();
+
+    return `
+      <section class="screen hub-screen">
+        <div class="hub-minimal">
+          <div class="hub-character">${renderCharacter(state.character, 150, { instrument: inst, equippedWear: state.equippedWear })}</div>
+          <p class="hub-name">${char.name}</p>
+          <p class="hub-appeal">Crowd Appeal: <strong>+${appeal}</strong></p>
+          <div class="hub-actions hub-actions-column">
+            <button class="btn btn-primary btn-lg btn-greenroom" id="btn-greenroom">
+              <span class="greenroom-btn-icon">🎭</span>
+              <span class="gig-loadout-text">The Green Room<br><small>Get ready &amp; play a gig</small></span>
+            </button>
+            <button class="btn btn-secondary" id="btn-shop">🛍️ Shop</button>
+          </div>
+        </div>
+        ${state.pendingRecruit && !state.gigResultsShown ? renderRecruitModal() : ''}
+      </section>
+    `;
+  }
+
+  function renderGreenRoom() {
+    const appeal = crowdAppeal();
+    const inst = getActiveInstrument();
 
     const venueCards = VENUES.map((v) => {
       const unlocked = venueUnlocked(v);
@@ -946,86 +970,92 @@ const Game = (() => {
       `;
     }).join('');
 
-    const inventorySections = ['instruments', 'songs', 'clothes', 'makeup', 'accessories'].map((cat) => {
+    const PICKER_META = {
+      instruments: { icon: '🎸', label: 'Instrument' },
+      songs: { icon: '🎵', label: 'Song' },
+      clothes: { icon: '👕', label: 'Clothes' },
+      makeup: { icon: '💄', label: 'Makeup' },
+      accessories: { icon: '🕶️', label: 'Accessories' },
+    };
+    const pickerPanels = Object.entries(PICKER_META).map(([cat, meta]) => {
       const items = ownedItems(cat);
-      const label = cat === 'songs' ? 'Songs' : cat.charAt(0).toUpperCase() + cat.slice(1);
-      return renderHubPanel(cat, label, `(${items.length})`, renderInventoryChips(cat));
+      return `
+        <div class="gr-panel">
+          <h4>${meta.icon} ${meta.label} <span class="hub-panel-count">(${items.length})</span></h4>
+          ${renderInventoryChips(cat)}
+        </div>`;
     }).join('');
 
     const openSlots = getOpenBandSlots();
-    const slotCount = getBandSlotCount();
     syncGigBandIds();
-    const gigBand = getGigBandMembers();
-    const gigCount = gigBand.length;
-    const rosterCount = state.bandMembers.length;
 
-    const bandBody = `
-      <p class="band-open-slots">${openSlots} open slot${openSlots === 1 ? '' : 's'} · play gigs to recruit</p>
-      <div class="band-roster-gig">
-        ${state.bandMembers.map((m) => {
-          const id = getBandmateId(m);
-          const forGig = state.gigBandIds.includes(id);
-          return `
-            <div class="band-member-row ${forGig ? 'gig-active' : ''}">
-              <button type="button" class="gig-toggle-btn ${forGig ? 'active' : ''}" data-gig-toggle="${id}" title="${forGig ? 'Playing this gig' : 'Bench for this gig'}">${forGig ? '✓' : '○'}</button>
-              <div class="bandmate-chip" title="${m.role}">
-                ${renderBandmateCharacter(m, 52)}
-                <span>${m.name}</span>
-              </div>
-              <button type="button" class="btn-drop-member" data-drop-member="${id}" title="Drop from band">✕</button>
-            </div>`;
-        }).join('')}
-        ${Array.from({ length: openSlots }, () => `
-          <div class="bandmate-chip empty-slot" title="Open slot — recruit during gigs">
-            <div class="empty-slot-icon">➕</div>
-            <span>Open</span>
-          </div>`).join('')}
-        ${!state.bandMembers.length && !openSlots
-          ? '<span class="inv-empty">Solo act</span>'
-          : ''}
-      </div>`;
+    const bandmates = state.bandMembers.map((m) => {
+      const id = getBandmateId(m);
+      const forGig = state.gigBandIds.includes(id);
+      return `
+        <div class="gr-bandmate ${forGig ? 'in-gig' : 'benched'}">
+          <button type="button" class="gr-bandmate-btn" data-gig-toggle="${id}"
+                  title="${m.name} (${m.role}) — ${forGig ? 'playing this gig · tap to bench' : 'sitting out · tap to add'}">
+            ${renderBandmateCharacter(m, 84)}
+            <span class="gr-bandmate-badge">${forGig ? '✓ In' : 'Out'}</span>
+          </button>
+          <span class="gr-bandmate-name">${m.name}</span>
+          <button type="button" class="btn-drop-member" data-drop-member="${id}" title="Drop from band">✕</button>
+        </div>`;
+    }).join('');
 
-    const bandSection = renderHubPanel(
-      'band',
-      'Band',
-      `(${gigCount}/${rosterCount} gig · ${rosterCount}/${slotCount})`,
-      bandBody,
-    );
+    const emptySlots = Array.from({ length: openSlots }, () => `
+      <div class="gr-bandmate empty" title="Open slot — recruit during gigs">
+        <div class="empty-slot-icon">➕</div>
+        <span class="gr-bandmate-name">Open slot</span>
+      </div>`).join('');
 
-    const inst = getActiveInstrument();
+    const venue = VENUES.find((v) => v.id === state.currentVenue);
     const loadoutCompact = renderGigLoadoutSummary({ compact: true });
 
     return `
-      <section class="screen hub-screen">
-        <div class="hub-layout">
-          <aside class="hub-sidebar">
-            <div class="hub-character">${renderCharacter(state.character, 120, { instrument: inst, equippedWear: state.equippedWear })}</div>
-            <p class="hub-name">${char.name}</p>
-            <p class="hub-appeal">Crowd Appeal: <strong>+${appeal}</strong></p>
-            <div class="hub-loadout">
-              <h4>Gig Loadout</h4>
-              ${renderGigLoadoutSummary()}
-            </div>
-            ${inventorySections}
-            ${bandSection}
-          </aside>
+      <section class="screen greenroom-screen">
+        <div class="gr-header">
+          <button class="btn btn-ghost" data-action="back-hub">← Home</button>
+          <h2 class="gr-title">⭐ The Green Room</h2>
+          <span class="gr-appeal">Crowd Appeal: <strong>+${appeal}</strong></span>
+        </div>
 
-          <div class="hub-main">
-            <div class="hub-venue-preview">
-              ${renderVenueBackdrop(state.currentVenue)}
-              <div class="hub-venue-label">${VENUES.find((v) => v.id === state.currentVenue)?.name || 'Venue'}</div>
+        <div class="gr-room">
+          <div class="gr-sign">✦ GREEN ROOM ✦</div>
+          <div class="gr-stage-row">
+            <div class="gr-mirror-wrap">
+              <div class="gr-mirror">
+                <div class="gr-bulbs">${'<span class="gr-bulb"></span>'.repeat(7)}</div>
+                <div class="gr-character">${renderCharacter(state.character, 132, { instrument: inst, equippedWear: state.equippedWear })}</div>
+              </div>
+              <div class="gr-vanity"></div>
             </div>
-            <h2>Choose Your Venue</h2>
-            <div class="venue-grid">${venueCards}</div>
-
-            <div class="hub-actions">
-              <button class="btn btn-primary btn-lg" id="btn-perform">
-                <span class="gig-loadout-preview">${typeof renderShopInstrumentPreview === 'function' ? renderShopInstrumentPreview(inst, 36) : inst.emoji}</span>
-                <span class="gig-loadout-text">Play Gig<br><small>${loadoutCompact}</small></span>
-              </button>
-              <button class="btn btn-secondary" id="btn-shop">🛍️ Shop</button>
+            <div class="gr-bandmates">
+              ${bandmates}${emptySlots}
+              ${!state.bandMembers.length && !openSlots
+                ? '<span class="inv-empty">Solo act — recruit bandmates during gigs</span>'
+                : ''}
             </div>
           </div>
+        </div>
+
+        <div class="gr-panels">${pickerPanels}</div>
+
+        <div class="gr-venue">
+          <h3>Choose Your Venue</h3>
+          <div class="hub-venue-preview">
+            ${renderVenueBackdrop(state.currentVenue)}
+            <div class="hub-venue-label">${venue?.name || 'Venue'}</div>
+          </div>
+          <div class="venue-grid">${venueCards}</div>
+        </div>
+
+        <div class="hub-actions">
+          <button class="btn btn-primary btn-lg" id="btn-perform">
+            <span class="gig-loadout-preview">${typeof renderShopInstrumentPreview === 'function' ? renderShopInstrumentPreview(inst, 36) : inst.emoji}</span>
+            <span class="gig-loadout-text">Play Gig<br><small>${loadoutCompact}</small></span>
+          </button>
         </div>
 
         ${state.pendingRecruit && !state.gigResultsShown ? renderRecruitModal() : ''}
@@ -1351,7 +1381,7 @@ const Game = (() => {
   }
 
   function updateHubVenueSelection() {
-    if (state.screen !== 'hub') return false;
+    if (!['hub', 'greenroom'].includes(state.screen)) return false;
     const venue = VENUES.find((v) => v.id === state.currentVenue);
     if (!venue) return false;
 
@@ -1384,6 +1414,7 @@ const Game = (() => {
       case 'select': html = renderSelect(); break;
       case 'tutorial': html = renderTutorial(); break;
       case 'hub': html = renderHub(); break;
+      case 'greenroom': html = renderGreenRoom(); break;
       case 'shop': html = renderShop(); break;
       case 'perform': html = renderPerformance(); break;
       case 'results': html = renderResults(); break;
@@ -1395,10 +1426,10 @@ const Game = (() => {
     bindEvents();
     if (parallaxCleanup) parallaxCleanup();
     parallaxCleanup = null;
-    if (['hub', 'perform'].includes(state.screen)) {
-      const parallaxRoot = state.screen === 'hub'
-        ? document.querySelector('.hub-venue-preview')
-        : document.querySelector('.perform-screen');
+    if (['hub', 'greenroom', 'perform'].includes(state.screen)) {
+      const parallaxRoot = state.screen === 'perform'
+        ? document.querySelector('.perform-screen')
+        : document.querySelector('.hub-venue-preview');
       if (parallaxRoot) parallaxCleanup = initVenueParallax(parallaxRoot);
     }
     if (state.screen === 'title') {
@@ -1408,10 +1439,13 @@ const Game = (() => {
   }
 
   function syncPerformerInstrumentPose() {
-    if (!['hub', 'perform', 'tune'].includes(state.screen)) return;
+    if (!['hub', 'greenroom', 'perform', 'tune'].includes(state.screen)) return;
     let performer = document.getElementById('performer');
     if (!performer && state.screen === 'hub') {
       performer = document.querySelector('.hub-character .character-layered');
+    }
+    if (!performer && state.screen === 'greenroom') {
+      performer = document.querySelector('.gr-character .character-layered');
     }
     if (!performer && state.screen === 'tune') {
       performer = document.querySelector('.tune-preview-wrap .character-layered');
@@ -1578,6 +1612,7 @@ const Game = (() => {
 
     const performBtn = $('#btn-perform');
     if (performBtn) performBtn.onclick = () => startPerformance();
+    $('#btn-greenroom')?.addEventListener('click', () => { enterGreenRoom(); });
     $('#btn-shop')?.addEventListener('click', () => setScreen('shop'));
 
     $$('.shop-tab').forEach((tab) => {
@@ -2280,6 +2315,29 @@ const Game = (() => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  // Curtain-wrapped transition from the hub into the Green Room: close the
+  // curtain like a gig intro, swap screens behind it, then reveal the
+  // dressing room. Mirrors runGigIntroSequence's phases minus the loading.
+  async function enterGreenRoom() {
+    if (state.curtainTransition || state.gigIntroRunning) return;
+    state.curtainTransition = true;
+    const btn = document.getElementById('btn-greenroom');
+    if (btn) btn.disabled = true;
+    try {
+      AudioEngine.resume();
+      setCurtainState('closing', 'Heading backstage…');
+      await waitMs(650);
+      setScreen('greenroom');
+      await waitMs(80);
+      setCurtainState('opening');
+      await waitMs(800);
+      setCurtainState('done');
+    } finally {
+      state.curtainTransition = false;
+      dismissStageCurtain();
+    }
+  }
+
   async function runGigIntroSequence() {
     const introToken = ++gigIntroToken;
     const btn = document.getElementById('btn-perform');
@@ -2491,7 +2549,8 @@ const Game = (() => {
     state.starMeter += starGain;
 
     if (tip >= 2) {
-      AudioEngine.playCoin();
+      // No coin SFX here - when a gem is popped, the selected instrument
+      // should be the only sound. The cash floater still shows the tip.
       const tipLabel = hot ? `+$${Math.floor(tip)} ×${HOT_STREAK_MULT}` : `+$${Math.floor(tip)}`;
       spawnFloater(tipLabel, 'cash', { hot });
     }

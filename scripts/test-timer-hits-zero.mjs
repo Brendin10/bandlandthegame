@@ -19,6 +19,9 @@ await page.evaluate((s) => localStorage.setItem('bandland_save_v2', JSON.stringi
 await page.reload({ waitUntil: 'networkidle0' });
 await page.click('#btn-continue');
 await page.waitForSelector('.hub-screen');
+await page.click('#btn-greenroom');
+await page.waitForSelector('.greenroom-screen', { timeout: 10000 });
+await new Promise((r) => setTimeout(r, 1800));
 await page.click('#btn-perform');
 await page.waitForSelector('.perform-screen', { timeout: 20000 });
 await new Promise((r) => setTimeout(r, 6000));
