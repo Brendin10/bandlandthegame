@@ -3131,14 +3131,20 @@ body {
   animation: rigStrumL 0.28s ease;
 }
 
-.rig-arm-L.rig-pose-drums.rig-hit .rig-forearm-pose,
-.rig-arm-L.rig-pose-drums.rig-hit .rig-stick {
-  animation: rigDrumHitL 0.22s ease;
+.rig-arm-L.rig-pose-drums.rig-hit .rig-hand-pose {
+  animation: rigDrumStrikeL 0.2s cubic-bezier(0.4, 0, 0.3, 1);
 }
 
-.rig-arm-R.rig-pose-drums.rig-hit-alt .rig-forearm-pose,
-.rig-arm-R.rig-pose-drums.rig-hit-alt .rig-stick {
-  animation: rigDrumHitR 0.22s ease;
+.rig-arm-R.rig-pose-drums.rig-hit .rig-hand-pose {
+  animation: rigDrumStrikeR 0.2s cubic-bezier(0.4, 0, 0.3, 1);
+}
+
+.rig-arm-L.rig-pose-drums.rig-hit .rig-forearm-pose {
+  animation: rigDrumElbowL 0.2s ease;
+}
+
+.rig-arm-R.rig-pose-drums.rig-hit .rig-forearm-pose {
+  animation: rigDrumElbowR 0.2s ease;
 }
 
 .rig-arm-L.rig-pose-keys.rig-hit .rig-hand-pose,
@@ -3181,11 +3187,19 @@ body {
 }
 
 .rig-arm-L.rig-pose-drums .rig-forearm-pose {
-  transform: rotate(var(--rig-rest-forearm, 20deg));
+  transform: rotate(var(--rig-rest-forearm, 22deg));
 }
 
 .rig-arm-R.rig-pose-drums .rig-forearm-pose {
-  transform: rotate(var(--rig-rest-forearm, 20deg));
+  transform: rotate(var(--rig-rest-forearm, -22deg));
+}
+
+.rig-arm-L.rig-pose-drums .rig-hand-pose {
+  transform: rotate(var(--rig-rest-hand, 8deg));
+}
+
+.rig-arm-R.rig-pose-drums .rig-hand-pose {
+  transform: rotate(var(--rig-rest-hand, -8deg));
 }
 
 .rig-arm-L.rig-pose-brass .rig-forearm-pose {
@@ -3305,14 +3319,13 @@ body {
   animation: rigStrumPressR 0.2s ease;
 }
 
-.rig-arm-L.rig-pose-drums.rig-press .rig-forearm-pose,
-.rig-arm-L.rig-pose-drums.rig-press .rig-stick {
-  animation: rigDrumPressL 0.18s ease;
+.rig-arm-L.rig-pose-drums.rig-press .rig-hand-pose {
+  animation: rigDrumStrikeL 0.18s ease;
 }
 
-.rig-arm-R.rig-pose-drums.rig-press-alt .rig-forearm-pose,
-.rig-arm-R.rig-pose-drums.rig-press-alt .rig-stick {
-  animation: rigDrumPressR 0.18s ease;
+.rig-arm-R.rig-pose-drums.rig-press-alt .rig-hand-pose {
+  animation: rigDrumStrikeR 0.18s ease;
+  animation-delay: 0.06s;
 }
 
 .rig-arm-L.rig-pose-keys.rig-press .rig-hand-pose,
@@ -3347,31 +3360,17 @@ body {
   animation-delay: 0.22s;
 }
 
-.rig-playing .rig-arm-L.rig-pose-drums.rig-press .rig-forearm-pose,
-.rig-playing .rig-arm-R.rig-pose-drums.rig-press-alt .rig-forearm-pose {
-  animation: rigDrumSustainL 0.35s ease-in-out infinite alternate;
+.rig-playing .rig-arm-L.rig-pose-drums .rig-hand-pose {
+  animation: rigDrumRollL 0.24s ease-in-out infinite alternate;
 }
 
-.rig-playing .rig-arm-R.rig-pose-drums.rig-press .rig-forearm-pose,
-.rig-playing .rig-arm-L.rig-pose-drums.rig-press-alt .rig-forearm-pose {
-  animation: rigDrumSustainR 0.35s ease-in-out infinite alternate;
-  animation-delay: 0.17s;
-}
-
-.rig-playing.rig-pose-drums .rig-stick.rig-stick-sustain {
-  animation: rigStickSustain 0.35s ease-in-out infinite alternate;
+.rig-playing .rig-arm-R.rig-pose-drums .rig-hand-pose {
+  animation: rigDrumRollR 0.24s ease-in-out infinite alternate;
+  animation-delay: 0.12s;
 }
 
 .rig-playing .rig-arm-R.rig-pose-brass.rig-press-alt .rig-hand-pose {
   animation: rigBrassSustain 0.4s ease-in-out infinite alternate;
-}
-
-.rig-stick.rig-stick-hit {
-  animation: rigStickHit 0.18s ease;
-}
-
-.rig-stick.rig-stick-sustain {
-  animation: rigStickSustain 0.35s ease-in-out infinite alternate;
 }
 
 @keyframes rigStrumPressL {
@@ -3394,25 +3393,9 @@ body {
   to { transform: rotate(calc(var(--rig-rest-forearm, 44deg) + 14deg)); }
 }
 
-@keyframes rigDrumPressL {
-  0%, 100% { transform: rotate(var(--rig-rest-forearm, 20deg)); }
-  50% { transform: rotate(calc(var(--rig-rest-forearm, 20deg) + 18deg)); }
-}
 
-@keyframes rigDrumPressR {
-  0%, 100% { transform: rotate(var(--rig-rest-forearm, 20deg)); }
-  50% { transform: rotate(calc(var(--rig-rest-forearm, 20deg) + 18deg)); }
-}
 
-@keyframes rigDrumSustainL {
-  from { transform: rotate(calc(var(--rig-rest-forearm, 20deg) + 6deg)); }
-  to { transform: rotate(calc(var(--rig-rest-forearm, 20deg) + 22deg)); }
-}
 
-@keyframes rigDrumSustainR {
-  from { transform: rotate(calc(var(--rig-rest-forearm, 20deg) + 6deg)); }
-  to { transform: rotate(calc(var(--rig-rest-forearm, 20deg) + 22deg)); }
-}
 
 @keyframes rigKeySustain {
   from { transform: translateY(0) rotate(var(--rig-rest-hand, 0deg)); }
@@ -3429,10 +3412,6 @@ body {
   to { transform: rotate(calc(var(--rig-rest-hand, 18deg) + 10deg)) translateY(2px); }
 }
 
-@keyframes rigStickSustain {
-  from { transform: rotate(4deg); }
-  to { transform: rotate(16deg); }
-}
 
 @keyframes rigStrumR {
   0%, 100% { transform: rotate(44deg); }
@@ -3446,15 +3425,7 @@ body {
   70% { transform: rotate(28deg); }
 }
 
-@keyframes rigDrumHitL {
-  0%, 100% { transform: rotate(20deg); }
-  35% { transform: rotate(42deg); }
-}
 
-@keyframes rigDrumHitR {
-  0%, 100% { transform: rotate(20deg); }
-  35% { transform: rotate(42deg); }
-}
 
 @keyframes rigKeyPress {
   0%, 100% { transform: translateY(0); }
@@ -3466,10 +3437,6 @@ body {
   50% { transform: rotate(26deg) translateY(3px); }
 }
 
-@keyframes rigStickHit {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(18deg); }
-}
 
 /* Drum kit hit flash */
 .drum-piece.drum-hit-flash {
@@ -3870,4 +3837,37 @@ body {
   .gr-stage-row {
     justify-content: center;
   }
+}
+
+/* Drum kit: stick strike + roll keyframes */
+@keyframes rigDrumStrikeL {
+  0% { transform: rotate(calc(var(--rig-rest-hand, 8deg) - 24deg)) translate(0, -5px); }
+  40% { transform: rotate(calc(var(--rig-rest-hand, 8deg) + 26deg)) translate(2px, 7px); }
+  100% { transform: rotate(var(--rig-rest-hand, 8deg)) translate(0, 0); }
+}
+
+@keyframes rigDrumStrikeR {
+  0% { transform: rotate(calc(var(--rig-rest-hand, -8deg) + 24deg)) translate(0, -5px); }
+  40% { transform: rotate(calc(var(--rig-rest-hand, -8deg) - 26deg)) translate(-2px, 7px); }
+  100% { transform: rotate(var(--rig-rest-hand, -8deg)) translate(0, 0); }
+}
+
+@keyframes rigDrumElbowL {
+  0%, 100% { transform: rotate(var(--rig-rest-forearm, 22deg)); }
+  40% { transform: rotate(calc(var(--rig-rest-forearm, 22deg) + 10deg)); }
+}
+
+@keyframes rigDrumElbowR {
+  0%, 100% { transform: rotate(var(--rig-rest-forearm, -22deg)); }
+  40% { transform: rotate(calc(var(--rig-rest-forearm, -22deg) - 10deg)); }
+}
+
+@keyframes rigDrumRollL {
+  from { transform: rotate(calc(var(--rig-rest-hand, 8deg) - 10deg)) translate(0, -3px); }
+  to { transform: rotate(calc(var(--rig-rest-hand, 8deg) + 16deg)) translate(1px, 5px); }
+}
+
+@keyframes rigDrumRollR {
+  from { transform: rotate(calc(var(--rig-rest-hand, -8deg) + 16deg)) translate(-1px, 5px); }
+  to { transform: rotate(calc(var(--rig-rest-hand, -8deg) - 10deg)) translate(0, -3px); }
 }

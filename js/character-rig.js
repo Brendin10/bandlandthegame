@@ -57,6 +57,10 @@ const CharacterRig = (() => {
   // fret hand actually reaches up the neck and the strum hand hangs over
   // the strings, instead of both hands dangling at the hips.
   const FRONT_GEOM = {
+    drums: {
+      L: { upper: { cx: 12, cy: 6 }, forearm: { x: 4, y: 9 }, hand: { x: 8, y: 19 } },
+      R: { upper: { cx: -12, cy: 6 }, forearm: { x: -4, y: 9 }, hand: { x: -8, y: 19 } },
+    },
     guitar: {
       L: { upper: { cx: 4, cy: 8 }, forearm: { x: -8, y: 8 }, hand: { x: -13, y: 15 } },
       R: { upper: { cx: -10, cy: 9 }, forearm: { x: -2, y: 16 }, hand: { x: -6, y: 29 } },
@@ -75,9 +79,14 @@ const CharacterRig = (() => {
     const poseCls = `rig-pose-${pose}`;
     const geom = FRONT_GEOM[pose]?.[side] || { upper: { cx: 12 * toward, cy: 10 }, forearm: { x: 0, y: 18 }, hand: { x: 0, y: 32 } };
 
-    const stick = pose === 'drums' && layer !== 'back' && !options.hideSticks
-      ? `<line class="rig-stick" x1="${isLeft ? 28 : 172}" y1="188" x2="${isLeft ? 18 : 182}" y2="168" stroke="#8B7355" stroke-width="3" stroke-linecap="round"/>
-         <ellipse class="rig-stick-tip" cx="${isLeft ? 16 : 184}" cy="166" rx="4" ry="3" fill="#deb887" stroke="${OUTLINE}" stroke-width="1"/>`
+    // Drumsticks are gripped by the hands themselves (inside the hand-pose
+    // group) so every strike animation moves stick and paw together, angled
+    // down-inward toward the kit on the ground.
+    const stick = pose === 'drums' && !options.hideSticks
+      ? `<g class="rig-stick">
+           <line x1="1" y1="6" x2="${isLeft ? 24 : -24}" y2="28" stroke="#c99a5b" stroke-width="4" stroke-linecap="round"/>
+           <ellipse cx="${isLeft ? 26.5 : -26.5}" cy="30" rx="4.5" ry="3.5" fill="#eed3a0" stroke="${OUTLINE}" stroke-width="1.4"/>
+         </g>`
       : '';
 
     // The strumming hand holds a pick so the strum reads instantly.
@@ -97,11 +106,11 @@ const CharacterRig = (() => {
         </g>
         <g class="rig-hand" transform="translate(${geom.hand.x},${geom.hand.y})">
           <g class="rig-hand-pose" style="transform-box:fill-box;transform-origin:0 0">
+            ${stick}
             <ellipse cx="0" cy="6" rx="9" ry="8" fill="${hand}" stroke="${OUTLINE}" stroke-width="2"/>
             ${pick}
           </g>
         </g>
-        ${stick}
       </g>`;
   }
 
@@ -127,8 +136,14 @@ const CharacterRig = (() => {
     });
   }
 
+  let drumFlip = false;
+
   function hitClassForArm(side, pose, phase) {
     const isLeft = side === 'L';
+    if (pose === 'drums' && phase === 'hit') {
+      // Alternate hands like a real drummer: only one stick strikes per hit.
+      return (drumFlip ? isLeft : !isLeft) ? 'rig-hit' : '';
+    }
     if (pose === 'guitar') {
       // The right hand always does the strumming; the fret hand only gets a
       // small finger-shift pulse via its -alt class.
@@ -147,6 +162,7 @@ const CharacterRig = (() => {
   function applyPose(rootEl, pose, phase = 'hit') {
     if (!rootEl) return;
     const poses = ['idle', 'strum', 'guitar', 'keys', 'drums', 'brass'];
+    if (pose === 'drums' && phase === 'hit') drumFlip = !drumFlip;
     rootEl.querySelectorAll('.rig-arm').forEach((arm) => {
       poses.forEach((p) => arm.classList.remove(`rig-pose-${p}`));
       arm.classList.add(`rig-pose-${pose}`);
@@ -154,14 +170,8 @@ const CharacterRig = (() => {
       if (phase === 'hit' || phase === 'press') {
         void arm.offsetWidth;
         const side = arm.classList.contains('rig-arm-L') ? 'L' : 'R';
-        arm.classList.add(hitClassForArm(side, pose, phase));
-      }
-    });
-    rootEl.querySelectorAll('.rig-stick').forEach((s) => {
-      s.classList.remove('rig-stick-hit', 'rig-stick-sustain');
-      void s.offsetWidth;
-      if ((phase === 'hit' || phase === 'press') && pose === 'drums') {
-        s.classList.add(phase === 'press' ? 'rig-stick-sustain' : 'rig-stick-hit');
+        const cls = hitClassForArm(side, pose, phase);
+        if (cls) arm.classList.add(cls);
       }
     });
   }

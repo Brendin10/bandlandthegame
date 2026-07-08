@@ -57,11 +57,16 @@ const InstrumentGrips = (() => {
       rot: -4,
     },
     drums: {
+      // The kit sits ON THE GROUND in front of the drummer, near full body
+      // width, anchored by its bottom edge at the character's feet. The
+      // rigged hands hold drumsticks that strike down onto it.
       gripL: { x: 64, y: 172 },
       gripR: { x: 136, y: 172 },
-      art: { w: 178, h: 118, anchorX: 0.5, anchorY: 0.78 },
+      art: { w: 154, h: 125, anchorX: 0.5, anchorY: 0.96 },
       rot: 0,
-      hideSticks: true,
+      hideSticks: false,
+      mount: { x: 100, y: 250 },
+      rest: { L: { forearm: 22, hand: 8 }, R: { forearm: -22, hand: -8 } },
     },
     bass: {
       // Vertical source art, rotated down into the slung position.
@@ -97,6 +102,7 @@ const InstrumentGrips = (() => {
       mountAt: over.mountAt || base.mountAt || 'L',
       flip: over.flip ?? base.flip ?? false,
       rest: over.rest || base.rest || null,
+      mount: over.mount || base.mount || null,
     };
   }
 
@@ -106,7 +112,7 @@ const InstrumentGrips = (() => {
 
   function mountTransform(grip) {
     const { art, rot } = grip;
-    const p = grip.mountAt === 'R' ? grip.gripR : grip.gripL;
+    const p = grip.mount || (grip.mountAt === 'R' ? grip.gripR : grip.gripL);
     const w = art.w;
     const h = art.h;
     const ax = art.anchorX * w;
