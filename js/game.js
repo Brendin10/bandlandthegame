@@ -840,11 +840,13 @@ const Game = (() => {
   function acceptRecruit() {
     if (!state.pendingRecruit) return false;
     if (!canRecruitBandmate()) return false;
-    state.bandMembers.push(state.pendingRecruit);
+    const { seenVenue, seenSong, ...member } = state.pendingRecruit;
+    state.bandMembers.push(member);
     normalizeBandMembers();
     syncGigBandIds();
     state.starMeter += 5;
     state.pendingRecruit = null;
+    state.recruitStep = 0;
     updateHud();
     persist();
     return true;
@@ -1073,22 +1075,50 @@ const Game = (() => {
 
   function renderRecruitModal() {
     const r = state.pendingRecruit;
+    const step = state.recruitStep || 0;
     const openSlots = getOpenBandSlots();
     const full = openSlots <= 0;
     const slotCount = getBandSlotCount();
+    const venue = r.seenVenue || 'your last show';
+    const song = r.seenSong || 'that last song';
+    const seed = (r.id || r.name || '').length + (r.role || '').length;
+
+    // A fan-turned-hopeful-bandmate: they saw the player's last gig and
+    // open with flattery about that exact venue + song before pitching.
+    const openers = [
+      `Hey, it's really you! I was in the crowd at ${venue} — your “${song}” set ROCKED. I've still got goosebumps!`,
+      `No way… the star of ${venue}! I caught the whole show. “${song}” has been stuck in my head ever since — you rocked that stage!`,
+      `Stop everything — I saw you play “${song}” at ${venue}, and it was the most rockin' thing I've ever heard. The crowd went WILD!`,
+    ];
+    const opener = openers[seed % openers.length];
+
+    let body = '';
+    if (step === 0) {
+      body = `
+        <div class="dlg-row dlg-them"><div class="dlg-bubble">${opener}</div></div>
+        <div class="dlg-choices">
+          <button type="button" class="btn btn-primary" data-recruit-next="1">You were there? Thanks! 🤘</button>
+          <button type="button" class="btn btn-secondary" data-recruit-next="1">Aw, you're making me blush…</button>
+        </div>`;
+    } else {
+      body = `
+        <div class="dlg-row dlg-you"><div class="dlg-bubble dlg-bubble-you">So… what's your story?</div></div>
+        <div class="dlg-row dlg-them"><div class="dlg-bubble">I'm <strong>${r.name}</strong>, and I play a mean <strong>${r.role}</strong>. A performance like that deserves a full band behind it — let me join and I'll bring that same fire to every gig!</div></div>
+        ${full
+          ? `<p class="warn">No open band slots! Buy one in the shop, then come find ${r.name} again. (${state.bandMembers.length}/${slotCount} filled)</p>`
+          : ''}
+        <div class="dlg-choices">
+          ${full ? '' : `<button type="button" class="btn btn-primary" id="btn-accept-recruit">Welcome to the band! 🎸</button>`}
+          <button type="button" class="btn btn-ghost" id="btn-decline-recruit">Not right now</button>
+        </div>`;
+    }
+
     return `
       <div class="modal-overlay">
-        <div class="modal recruit-modal">
-          <div class="recruit-preview">${renderBandmateCharacter(r, 130)}</div>
-          <h3>🌟 Someone Wants In!</h3>
-          <p><strong>${r.name}</strong> (${r.role}) wants to join your band!</p>
-          ${full
-            ? `<p class="warn">No open band slots! Buy a slot in the shop. (${state.bandMembers.length}/${slotCount} filled)</p>`
-            : `<p>${openSlots} open slot${openSlots === 1 ? '' : 's'} — they'll boost your crowd and star power.</p>`}
-          <div class="modal-actions">
-            ${full ? '' : `<button class="btn btn-primary" id="btn-accept-recruit">Welcome Aboard!</button>`}
-            <button class="btn btn-ghost" id="btn-decline-recruit">Not Now</button>
-          </div>
+        <div class="modal recruit-modal recruit-dialogue">
+          <div class="recruit-preview">${renderBandmateCharacter(r, 120)}</div>
+          <h3>🌟 ${r.name} rushes over!</h3>
+          ${body}
         </div>
       </div>
     `;
@@ -1713,8 +1743,16 @@ const Game = (() => {
 
     $('#btn-decline-recruit')?.addEventListener('click', () => {
       state.pendingRecruit = null;
+      state.recruitStep = 0;
       persist();
       render();
+    });
+
+    $$('[data-recruit-next]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.recruitStep = 1;
+        render();
+      });
     });
 
     $$('[data-equip-cat]').forEach((btn) => {
@@ -2646,7 +2684,15 @@ const Game = (() => {
       const recruit = RECRUIT_POOL[Math.floor(Math.random() * RECRUIT_POOL.length)];
       const recruitId = recruit.id || getBandmateId(recruit);
       if (!state.bandMembers.find((m) => getBandmateId(m) === recruitId)) {
-        state.pendingRecruit = recruit;
+        // Remember exactly which show won them over - the dialogue quotes
+        // the venue and song they watched from the crowd.
+        const venue = VENUES.find((v) => v.id === state.currentVenue);
+        state.pendingRecruit = {
+          ...recruit,
+          seenVenue: venue?.name || 'your last show',
+          seenSong: getActiveSong()?.name || 'that last song',
+        };
+        state.recruitStep = 0;
         p.recruitedThisGig = recruit.name;
         p.recruitRolls += 1;
       }
@@ -2876,6 +2922,8 @@ const Game = (() => {
     initAudioUnlock();
     if (new URLSearchParams(window.location.search).get('test') === '1') {
       window.Bandland.endGig = (mode) => finishGigScreen(mode === 'booed' ? 'booed' : 'results');
+      window.Bandland.debugState = state;
+      window.Bandland.rerender = () => render();
     }
     clearGigEndWatchdog();
     hideGigResultsOverlay();

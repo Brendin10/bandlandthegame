@@ -63,13 +63,6 @@ const CharacterRig = (() => {
     },
   };
 
-  // The BACK pair of arms. These monsters have four arms on purpose: while
-  // the front pair plays the instrument, the back pair is thrown up in a
-  // rock-on pose - same rig style as the front, fists in the air.
-  const BACK_GEOM = {
-    L: { upper: { cx: -6, cy: -2 }, forearm: { x: -15, y: -20 }, hand: { x: -25, y: -32 } },
-    R: { upper: { cx: 6, cy: -2 }, forearm: { x: 15, y: -20 }, hand: { x: 25, y: -32 } },
-  };
 
   function armChain(side, colors, pose, layer, options = {}) {
     const isLeft = side === 'L';
@@ -80,9 +73,7 @@ const CharacterRig = (() => {
     const furLight = colors.furLight || '#BC94FF';
     const hand = colors.hand || '#D2B2FF';
     const poseCls = `rig-pose-${pose}`;
-    const geom = layer === 'back'
-      ? BACK_GEOM[side]
-      : (FRONT_GEOM[pose]?.[side] || { upper: { cx: 12 * toward, cy: 10 }, forearm: { x: 0, y: 18 }, hand: { x: 0, y: 32 } });
+    const geom = FRONT_GEOM[pose]?.[side] || { upper: { cx: 12 * toward, cy: 10 }, forearm: { x: 0, y: 18 }, hand: { x: 0, y: 32 } };
 
     const stick = pose === 'drums' && layer !== 'back' && !options.hideSticks
       ? `<line class="rig-stick" x1="${isLeft ? 28 : 172}" y1="188" x2="${isLeft ? 18 : 182}" y2="168" stroke="#8B7355" stroke-width="3" stroke-linecap="round"/>

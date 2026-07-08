@@ -1331,6 +1331,45 @@ body {
   align-items: center;
 }
 
+/* Recruit dialogue: chat-style back and forth with the hopeful bandmate */
+.recruit-dialogue .dlg-row {
+  display: flex;
+  margin: 8px 0;
+}
+
+.recruit-dialogue .dlg-them { justify-content: flex-start; }
+.recruit-dialogue .dlg-you { justify-content: flex-end; }
+
+.dlg-bubble {
+  background: rgba(155, 107, 255, 0.14);
+  border: 1px solid rgba(155, 107, 255, 0.4);
+  border-radius: 14px 14px 14px 4px;
+  padding: 10px 14px;
+  max-width: 88%;
+  text-align: left;
+  font-size: 0.93rem;
+  line-height: 1.35;
+  animation: dlgPop 0.25s ease;
+}
+
+.dlg-bubble-you {
+  background: rgba(57, 255, 20, 0.1);
+  border-color: rgba(57, 255, 20, 0.35);
+  border-radius: 14px 14px 4px 14px;
+}
+
+.dlg-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+@keyframes dlgPop {
+  from { transform: translateY(6px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 .recruit-modal {
   text-align: center;
 }
@@ -3159,67 +3198,6 @@ body {
 
 .rig-arm-R.rig-pose-brass .rig-hand-pose {
   transform: rotate(var(--rig-rest-hand, 18deg));
-}
-
-/* Back pair of arms: thrown up in a rock-on pose. Fixed angles (they don't
- * track the instrument grip), fists pump on every hit and bob while a note
- * is held. Extra class beats the per-pose rest rules in specificity. */
-.rig-arm-L.rig-layer-back .rig-forearm-pose {
-  transform: rotate(-38deg);
-}
-
-.rig-arm-R.rig-layer-back .rig-forearm-pose {
-  transform: rotate(38deg);
-}
-
-.rig-arm-L.rig-layer-back .rig-hand-pose {
-  transform: rotate(-24deg);
-}
-
-.rig-arm-R.rig-layer-back .rig-hand-pose {
-  transform: rotate(24deg);
-}
-
-.rig-arm-L.rig-layer-back.rig-hit .rig-hand-pose,
-.rig-arm-L.rig-layer-back.rig-hit-alt .rig-hand-pose,
-.rig-arm-L.rig-layer-back.rig-press .rig-hand-pose,
-.rig-arm-L.rig-layer-back.rig-press-alt .rig-hand-pose {
-  animation: rigBackPumpL 0.26s ease;
-}
-
-.rig-arm-R.rig-layer-back.rig-hit .rig-hand-pose,
-.rig-arm-R.rig-layer-back.rig-hit-alt .rig-hand-pose,
-.rig-arm-R.rig-layer-back.rig-press .rig-hand-pose,
-.rig-arm-R.rig-layer-back.rig-press-alt .rig-hand-pose {
-  animation: rigBackPumpR 0.26s ease;
-}
-
-.rig-playing .rig-arm-L.rig-layer-back .rig-hand-pose {
-  animation: rigBackBobL 0.5s ease-in-out infinite alternate;
-}
-
-.rig-playing .rig-arm-R.rig-layer-back .rig-hand-pose {
-  animation: rigBackBobR 0.5s ease-in-out infinite alternate;
-}
-
-@keyframes rigBackPumpL {
-  0%, 100% { transform: rotate(-24deg) translate(0, 0); }
-  45% { transform: rotate(-34deg) translate(-2px, -8px); }
-}
-
-@keyframes rigBackPumpR {
-  0%, 100% { transform: rotate(24deg) translate(0, 0); }
-  45% { transform: rotate(34deg) translate(2px, -8px); }
-}
-
-@keyframes rigBackBobL {
-  from { transform: rotate(-24deg) translate(0, 0); }
-  to { transform: rotate(-32deg) translate(-1px, -5px); }
-}
-
-@keyframes rigBackBobR {
-  from { transform: rotate(24deg) translate(0, 0); }
-  to { transform: rotate(32deg) translate(1px, -5px); }
 }
 
 /* Guitar & bass: slung hold. Rest angles pin the fret hand to the neck and

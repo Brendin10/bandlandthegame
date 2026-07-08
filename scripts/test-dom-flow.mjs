@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 const GAME = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const html = fs.readFileSync(`${GAME}/index.html`, 'utf8').replace(/<script[^>]*src=[^>]*><\/script>/g, '');
 
-const dom = new JSDOM(html, { url: 'http://localhost/', pretendToBeVisual: true, runScripts: 'outside-only' });
+const dom = new JSDOM(html, { url: 'http://localhost/?test=1', pretendToBeVisual: true, runScripts: 'outside-only' });
 const { window } = dom;
 const errors = [];
 window.addEventListener('error', (e) => errors.push('window.onerror: ' + e.message));
@@ -122,6 +122,23 @@ log('Shop purchase', savedState().inventories.clothes.includes('tie-dye-tee'));
 click('.shop-header [data-action="back-hub"]');
 await sleep(300);
 log('Shop back to hub', has('.hub-screen'));
+
+// Recruit dialogue: fan saw the last show, flatters, joins the band
+const st = window.Bandland.debugState;
+st.pendingRecruit = { id: 'boom', name: 'Boom', emoji: '🥁', role: 'Drums', seenVenue: 'Local Tavern', seenSong: 'Neon Lights' };
+st.recruitStep = 0;
+window.Bandland.rerender();
+await sleep(50);
+const bubble = doc.querySelector('.recruit-dialogue .dlg-bubble')?.textContent || '';
+log('Recruit dialogue opens', has('.recruit-dialogue'));
+log('Flattery references venue + song', bubble.includes('Local Tavern') && bubble.includes('Neon Lights'), bubble.slice(0, 60));
+click('[data-recruit-next]');
+await sleep(50);
+log('Dialogue advances to pitch', has('#btn-accept-recruit'));
+click('#btn-accept-recruit');
+await sleep(50);
+log('Recruit joins band', savedState().bandMembers.some((m) => m.id === 'boom'));
+log('Dialogue fields not saved on member', !savedState().bandMembers.some((m) => m.seenVenue));
 
 if (errors.length) { console.log('PAGE ERRORS:\n' + errors.join('\n')); failures++; }
 console.log(failures ? `\n${failures} FAILURE(S)` : '\nALL PASSED');
